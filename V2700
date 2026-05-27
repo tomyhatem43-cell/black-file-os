@@ -1,0 +1,175 @@
+. 
+### 1. `package.json`
+
+```json
+{
+  "name": "v2700-ai-company",
+  "version": "2.7.0",
+  "main": "src/api.js",
+  "scripts": {
+    "start:api": "node src/api.js",
+    "start:worker": "node src/worker-entry.js"
+  },
+  "dependencies": {
+    "bullmq": "^4.14.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "ioredis": "^5.3.2"
+  }
+}
+
+```
+
+---
+
+### 2. `docker-compose.yml`
+
+```yaml
+version: '3.8'
+services:
+  redis:
+    image: redis:alpine
+    ports: ["6379:6379"]
+  api:
+    build: { context: ., dockerfile: Dockerfile.api }
+    ports: ["3000:3000"]
+    environment: [REDIS_HOST=redis, REDIS_PORT=6379]
+  worker:
+    build: { context: ., dockerfile: Dockerfile.worker }
+    environment: [REDIS_HOST=redis, REDIS_PORT=6379]
+
+```
+
+---
+
+### 3. `Dockerfile.api`
+
+```dockerfile
+FROM node:18-bullseye-slim
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --production
+COPY . .
+CMD ["node", "src/api.js"]
+
+```
+
+---
+
+### 4. `Dockerfile.worker`
+
+```dockerfile
+FROM node:18-bullseye-slim
+RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --production
+COPY . .
+CMD ["node", "src/worker-entry.js"]
+
+```
+
+---
+
+### 5. `src/api.js`
+
+```javascript
+const express = require('express');
+const cors = require('cors');
+const { queues } = require('./queue/config');
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.post('/api/company/cycle', async (req, res) => {
+    await queues.intelligence.add('scan-trends', { strategy: { aggressiveness: 0.75 } });
+    res.json({ success: true, message: "Cycle initiated" });
+});
+
+app.listen(3000, () => console.log("API Online on 3000"));
+
+```
+
+---
+
+### 6. `src/worker-entry.js`
+
+```javascript
+const { Worker } = require('bullmq');
+const { connection } = require('./queue/config');
+const MediaEngine = require('./media/ffmpegEngine');
+
+// Worker for Production Dept
+new Worker('ProductionDept', async (job) => {
+    console.log(`Rendering job ${job.id}`);
+    await MediaEngine.render(job.data.content, job.id);
+}, { connection });
+
+// Worker for Intelligence Dept
+new Worker('IntelligenceDept', async (job) => {
+    console.log("Scanning Trends...");
+    // Logic goes here
+}, { connection });
+
+console.log("Workers Active.");
+
+```
+
+---
+
+### 7. `src/queue/config.js`
+
+```javascript
+const { Queue } = require('bullmq');
+const Redis = require('ioredis');
+const connection = new Redis({ host: process.env.REDIS_HOST || '127.0.0.1' });
+
+module.exports = { 
+    connection, 
+    queues: { 
+        intelligence: new Queue('IntelligenceDept', { connection }),
+        production: new Queue('ProductionDept', { connection }) 
+    } 
+};
+
+```
+
+---
+
+### 8. `src/media/ffmpegEngine.js`
+
+```javascript
+const ffmpeg = require('fluent-ffmpeg');
+const path = require('path');
+
+class MediaEngine {
+    static async render(content, jobId) {
+        return new Promise((resolve, reject) => {
+            const outputPath = path.join(__dirname, `../../output/v2700_${jobId}.mp4`);
+            ffmpeg()
+                .input('color=c=black:s=1080x1920:d=5')
+                .inputFormat('lavfi')
+                .complexFilter([`drawtext=text='${content.title}':fontcolor=white:fontsize=72:x=(w-text_w)/2:y=(h-text_h)/2`])
+                .outputOptions(['-c:v libx264', '-pix_fmt yuv420p'])
+                .save(outputPath)
+                .on('end', resolve)
+                .on('error', reject);
+        });
+    }
+}
+module.exports = MediaEngine;
+
+```
+
+---
+
+### 9. `frontend/index.html` (واجهة بسيطة)
+
+```html
+<button onclick="fetch('/api/company/cycle', {method:'POST'})">
+    ⚡ Trigger AI Factory
+</button>
+
+```

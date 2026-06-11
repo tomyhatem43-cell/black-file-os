@@ -15,7 +15,6 @@ export default function App() {
   const [memory, setMemory] = useState({});
 
   useEffect(() => {
-    // Load self-evolving memory
     const loadMemory = async () => {
       try {
         const savedMemory = await AsyncStorage.getItem('v6Memory');
@@ -23,29 +22,36 @@ export default function App() {
           setMemory(JSON.parse(savedMemory));
         }
       } catch (e) {
-        console.log('Memory load error');
+        console.log('Error loading memory:', e);
       }
     };
     loadMemory();
   }, []);
 
-  const updateMemory = async (newMemory) => {
-    const updated = { ...memory, ...newMemory };
-    setMemory(updated);
-    await AsyncStorage.setItem('v6Memory', JSON.stringify(updated));
+  const updateMemory = async (newData) => {
+    try {
+      const updatedMemory = { ...memory, ...newData };
+      setMemory(updatedMemory);
+      await AsyncStorage.setItem('v6Memory', JSON.stringify(updatedMemory));
+    } catch (e) {
+      console.log('Error saving memory:', e);
+    }
   };
 
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Dashboard">
-        <Stack.Screen name="Dashboard" options={{ title: 'V6 CORE Ultimate - الاستوديو الذكي الإعجازي' }}>
-          {(props) => <DashboardScreen {...props} memory={memory} updateMemory={updateMemory} />}
+        <Stack.Screen 
+          name="Dashboard" 
+          options={{ title: 'V6 CORE Ultimate' }}
+        >
+          {props => <DashboardScreen {...props} memory={memory} updateMemory={updateMemory} />}
         </Stack.Screen>
-        <Stack.Screen name="HookSelector" component={HookSelectorScreen} options={{ title: 'Hook Selector الذكي المتطور ذاتياً' }} />
-        <Stack.Screen name="Tools" component={ToolsPanelScreen} options={{ title: 'لوحة الأدوات الذكية الكاملة' }} />
-        <Stack.Screen name="Agents" component={AgentsPanelScreen} options={{ title: 'لوحة الوكلاء الذكية' }} />
-        <Stack.Screen name="Quality" component={QualityGateScreen} options={{ title: 'Quality Gate - التدقيق الآلي الخارق' }} />
-        <Stack.Screen name="Export" component={ExportScreen} options={{ title: 'Export Center - التصدير الاحترافي مع الحماية' }} />
+        <Stack.Screen name="HookSelector" component={HookSelectorScreen} options={{ title: 'Hook Selector' }} />
+        <Stack.Screen name="Tools" component={ToolsPanelScreen} options={{ title: 'Smart Tools' }} />
+        <Stack.Screen name="Agents" component={AgentsPanelScreen} options={{ title: 'Agents Panel' }} />
+        <Stack.Screen name="Quality" component={QualityGateScreen} options={{ title: 'Quality Gate' }} />
+        <Stack.Screen name="Export" component={ExportScreen} options={{ title: 'Export Center' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

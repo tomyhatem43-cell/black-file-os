@@ -1,49 +1,56 @@
-# V6 CORE Ultimate - دليل بناء التطبيق الحقيقي (APK)
+# V6 CORE Ultimate - دليل بناء التطبيق الحقيقي (APK) - النسخة المُصححة
 
 ## المتطلبات
 - Node.js + npm
-- حساب Expo مجاني (expo.dev)
-- EAS CLI
+- حساب Expo مجاني على expo.dev
+- اتصال إنترنت
 
-## الخطوات السريعة للحصول على رابط تحميل الـ APK
+## الخطوات المُصححة (الأسهل والأأمن)
 
-1. حمل الكود:
+### الطريقة السريعة (مُفضلة):
+
+```bash
+cd black-file-os/v6_core/apk
+npm install
+bash build_apk.sh
+```
+
+### الخطوات التفصيلية يدويًا:
+
+1. **تثبيت المتطلبات**:
    ```bash
-   git clone https://github.com/tomyhatem43-cell/black-file-os.git
-   cd black-file-os/v6_core/apk
    npm install
+   npm install -g eas-cli
    ```
 
-2. سجل في Expo:
-   - اذهب إلى https://expo.dev وسجل حساب.
-
-3. ثبت EAS CLI:
+2. **تسجيل الدخول في Expo**:
    ```bash
-   npm install -g eas-cli
    eas login
    ```
+   (استخدم حسابك tomyhatem43@gmail.com)
 
-4. ابنِ التطبيق (هذا يعطيك رابط تحميل مباشر):
+3. **تهيئة المشروع** (مرة واحدة فقط):
    ```bash
-   npx eas build --platform android --profile preview
+   eas build:configure
    ```
 
-5. بعد انتهاء البناء، ستحصل على رابط تحميل الـ APK.
+4. **بناء الـ APK**:
+   ```bash
+   eas build --platform android --profile preview
+   ```
 
-## بيانات الدخول
-- البريد: tomyhatem43@gmail.com
-- كلمة السر: Hamdyhatem560$
+5. **الحصول على الرابط**:
+   - بعد انتهاء البناء، افتح [expo.dev](https://expo.dev)
+   - اذهب إلى Builds
+   - انسخ رابط التحميل
 
-## ملاحظات
-- التطبيق يحتوي على شاشة دخول احترافية.
-- بعد الدخول ستجد كل المميزات (Hook Selector, Agents, Quality Gate, السكريبت المتفوق...).
-- للإنتاج استخدم: npx eas build --platform android --profile production
+## بيانات الدخول داخل التطبيق
+- البريد الإلكتروني: `tomyhatem43@gmail.com`
+- كلمة السر: `Hamdyhatem560$`
 
-## الموصلات المستخدمة
-- GitHub: الكود الرئيسي
-- Google Drive: تنظيم الملفات
-- Gamma: النموذج البصري
-- Notion: التوثيق
-- Vercel: النطاقات الجاهزة
+## ملاحظات مهمة
+- أول مرة قد يطلب منك قبول الشروط.
+- الملف الناتج هو APK قابل للتثبيت مباشرة.
+- للإصدار النهائي استخدم `production` بدلاً من `preview`.
 
-تم التنفيذ باستخدام جميع الموصلات بصلاحيات المالك الكاملة.
+تم التصحيح والتحسين باستخدام جميع الموصلات.

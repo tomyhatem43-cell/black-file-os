@@ -1,20 +1,25 @@
 #!/bin/bash
-# V6 CORE Ultimate - سكريبت بناء الـ APK السريع
-# نفذ هذا السكريبت بعد تثبيت المتطلبات
+# V6 CORE Ultimate - سكريبت بناء الـ APK المُصحح والمحسّن
 
-echo "=== V6 CORE Ultimate APK Builder ==="
+echo "=== V6 CORE Ultimate - بناء التطبيق الحقيقي ==="
 
-echo "1. التأكد من وجود EAS CLI..."
+echo "\n[1/5] التأكد من تثبيت EAS CLI..."
 if ! command -v eas &> /dev/null; then
     echo "تثبيت EAS CLI..."
     npm install -g eas-cli
 fi
 
-echo "2. تسجيل الدخول إلى Expo (استخدم حسابك tomyhatem43@gmail.com)"
+echo "\n[2/5] تسجيل الدخول إلى Expo..."
 eas login
 
-echo "3. بناء الـ APK (هذا قد يستغرق 5-10 دقائق)..."
+echo "\n[3/5] تهيئة المشروع للبناء (مرة واحدة فقط)..."
+eas build:configure
+
+echo "\n[4/5] بناء الـ APK (قد يستغرق 5-15 دقيقة)..."
 eas build --platform android --profile preview
 
-echo "✅ تم! تحقق من لوحة Expo للحصول على رابط التحميل."
-echo "بيانات الدخول داخل التطبيق: tomyhatem43@gmail.com / Hamdyhatem560$"
+echo "\n✅ تم البناء بنجاح!"
+echo "تحقق من لوحة Expo Dashboard للحصول على رابط التحميل."
+echo "\nبيانات الدخول داخل التطبيق:"
+echo "البريد: tomyhatem43@gmail.com"
+echo "كلمة السر: Hamdyhatem560$"

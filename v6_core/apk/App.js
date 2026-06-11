@@ -1,11 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function V6CinematicUX() {
+const CommandCard = memo(({ command, onPress }) => (
+  <TouchableOpacity 
+    style={styles.card} 
+    onPress={() => onPress(command)} 
+    activeOpacity={0.85}
+  >
+    <View style={[styles.iconBox, { backgroundColor: command.color + '12' }]}>
+      <Ionicons name={command.icon} size={24} color={command.color} />
+    </View>
+    <View style={{ flex: 1 }}>
+      <Text style={styles.cardTitle}>{command.label}</Text>
+      <Text style={styles.cardDesc}>{command.desc}</Text>
+    </View>
+    <Ionicons name="chevron-forward" size={20} color="#444" />
+  </TouchableOpacity>
+));
+
+export default function V6CinematicOptimized() {
   const [currentPage, setCurrentPage] = useState('main');
-  const [loading, setLoading] = useState(false);
   const [executing, setExecuting] = useState(null);
 
   const commands = [
@@ -16,51 +32,35 @@ export default function V6CinematicUX() {
     { id: 'analyze', label: 'SYSTEM ANALYSIS', desc: 'Diagnostics & Monitoring', icon: 'analytics-outline', color: '#A855F7' },
   ];
 
-  const handleCommand = (command) => {
+  const handleCommand = useCallback((command) => {
     setCurrentPage(command.id);
-  };
+  }, []);
 
-  const goBack = () => {
+  const goBack = useCallback(() => {
     setCurrentPage('main');
     setExecuting(null);
-  };
+  }, []);
 
-  const executeCommand = (command) => {
+  const executeCommand = useCallback((command) => {
     setExecuting(command.id);
-    setLoading(true);
-
     setTimeout(() => {
-      setLoading(false);
       setExecuting(null);
-      // Here you can later connect real actions (FFmpeg, EAS, etc.)
-    }, 1800);
-  };
+    }, 1600);
+  }, []);
+
+  const currentCommand = commands.find(c => c.id === currentPage);
 
   const renderMainMenu = () => (
     <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
       <Text style={styles.section}>COMMAND CENTER</Text>
       {commands.map(cmd => (
-        <TouchableOpacity 
-          key={cmd.id} 
-          style={styles.card} 
-          onPress={() => handleCommand(cmd)} 
-          activeOpacity={0.85}
-        >
-          <View style={[styles.iconBox, { backgroundColor: cmd.color + '12' }]}>
-            <Ionicons name={cmd.icon} size={24} color={cmd.color} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.cardTitle}>{cmd.label}</Text>
-            <Text style={styles.cardDesc}>{cmd.desc}</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color="#444" />
-        </TouchableOpacity>
+        <CommandCard key={cmd.id} command={cmd} onPress={handleCommand} />
       ))}
     </ScrollView>
-  );
+    );
 
   const renderDetail = () => {
-    const cmd = commands.find(c => c.id === currentPage);
+    if (!currentCommand) return null;
     const isExecuting = executing === currentPage;
 
     return (
@@ -71,11 +71,11 @@ export default function V6CinematicUX() {
         </TouchableOpacity>
 
         <View style={styles.detailHeader}>
-          <View style={[styles.iconBoxLarge, { backgroundColor: cmd.color + '15' }]}>
-            <Ionicons name={cmd.icon} size={40} color={cmd.color} />
+          <View style={[styles.iconBoxLarge, { backgroundColor: currentCommand.color + '15' }]}>
+            <Ionicons name={currentCommand.icon} size={38} color={currentCommand.color} />
           </View>
-          <Text style={styles.detailTitle}>{cmd.label}</Text>
-          <Text style={styles.detailDesc}>{cmd.desc}</Text>
+          <Text style={styles.detailTitle}>{currentCommand.label}</Text>
+          <Text style={styles.detailDesc}>{currentCommand.desc}</Text>
         </View>
 
         <View style={styles.infoBox}>
@@ -89,8 +89,8 @@ export default function V6CinematicUX() {
         </View>
 
         <TouchableOpacity 
-          style={[styles.execButton, { backgroundColor: cmd.color }]} 
-          onPress={() => executeCommand(cmd)}
+          style={[styles.execButton, { backgroundColor: currentCommand.color }]} 
+          onPress={() => executeCommand(currentCommand)}
           disabled={isExecuting}
         >
           {isExecuting ? (

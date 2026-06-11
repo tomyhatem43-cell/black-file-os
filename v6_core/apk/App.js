@@ -3,154 +3,178 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
-// V6 Ultimate System - Phase 1, 2 & 3 Combined
-const agentData = [
-  // Intelligence
-  { id: 'trend', name: 'Trend Intelligence', category: 'Intelligence', desc: 'Real-time viral analysis + platform prediction', automation: 'Analyzes trends and generates 7 hook variations', color: '#00D4FF' },
-  { id: 'audience', name: 'Audience Psychology', category: 'Intelligence', desc: 'Deep audience behavior and persona creation', automation: 'Creates detailed audience personas + content strategy', color: '#5AC8FA' },
-  { id: 'competitor', name: 'Competitor Analysis', category: 'Intelligence', desc: 'Analyzes competitors and finds opportunities', automation: 'Generates competitive gaps + strategy recommendations', color: '#64D2FF' },
-
-  // Creation
-  { id: 'script', name: 'Script Architect', category: 'Creation', desc: 'Psychological storytelling + retention engineering', automation: 'Creates 3 full scripts with A/B testing', color: '#FFD700' },
-  { id: 'hook', name: 'Hook Master', category: 'Creation', desc: 'High-conversion psychological hooks', automation: 'Generates 8 powerful hook variations', color: '#FF9500' },
-  { id: 'story', name: 'Story Weaver', category: 'Creation', desc: 'Narrative structure + emotional arcs', automation: 'Builds complete story frameworks', color: '#FF2D55' },
-  { id: 'dialogue', name: 'Dialogue Crafter', category: 'Creation', desc: 'Natural dialogue + character voice', automation: 'Creates authentic dialogue with personality', color: '#BF5AF2' },
-
-  // Visual
-  { id: 'visual', name: 'Cinematic Visual Engine', category: 'Visual', desc: 'Advanced local FFmpeg + effects', automation: 'Generates pro cinematic FFmpeg pipelines', color: '#FF6B6B' },
-  { id: 'color', name: 'Color Science', category: 'Visual', desc: 'Emotional color grading + LUT creation', automation: 'Creates cinematic color palettes + custom LUTs', color: '#FF375F' },
-  { id: 'lighting', name: 'Lighting Director', category: 'Visual', desc: 'Cinematic lighting design', automation: 'Generates lighting setups + mood references', color: '#FF6482' },
-
-  // Audio
-  { id: 'audio', name: 'Audio Intelligence', category: 'Audio', desc: 'Voice enhancement + music ducking', automation: 'Creates professional audio processing chains', color: '#30D158' },
-  { id: 'music', name: 'Music Sync', category: 'Audio', desc: 'Beat detection + emotional music matching', automation: 'Generates perfect music synchronization', color: '#32D74B' },
-
-  // Editing
-  { id: 'editor', name: 'Smart Editor', category: 'Editing', desc: 'AI pacing + music synchronization', automation: 'Auto-generates edit decisions + beat maps', color: '#A855F7' },
-  { id: 'pace', name: 'Pacing Optimizer', category: 'Editing', desc: 'Retention-based pacing analysis', automation: 'Optimizes video pacing for maximum retention', color: '#BF5AF2' },
-
-  // Quality & Automation
-  { id: 'quality', name: 'Quality Guardian', category: 'Quality', desc: 'Automated quality scoring + improvements', automation: 'Scans and suggests 12+ enhancements', color: '#FF9F0A' },
-  { id: 'pipeline', name: 'Full Pipeline', category: 'Automation', desc: 'End-to-end production automation', automation: 'Runs complete idea-to-publish workflow', color: '#FF6482' },
-  { id: 'batch', name: 'Batch Processor', category: 'Automation', desc: 'Multi-video consistent processing', automation: 'Processes 10+ videos with consistent quality', color: '#FF375F' },
+// Advanced FFmpeg Automation Studio
+const ffmpegPresets = [
+  {
+    id: 'cinematic_color',
+    category: 'Color Grading',
+    name: 'Cinematic Color Grade',
+    desc: 'Hollywood-style color grading with contrast and saturation boost',
+    command: 'ffmpeg -i input.mp4 -vf "eq=brightness=0.08:contrast=1.25:saturation=1.2,unsharp=5:5:1.0:5:5:0.0" -c:a copy output_cinematic.mp4',
+    level: 'Advanced'
+  },
+  {
+    id: 'warm_vintage',
+    category: 'Color Grading',
+    name: 'Warm Vintage Look',
+    desc: 'Warm tones with slight vignette and film grain feel',
+    command: 'ffmpeg -i input.mp4 -vf "eq=brightness=0.05:contrast=1.1:saturation=0.9, vignette=PI/4:0.3, noise=alls=10:allf=t" -c:a copy output_vintage.mp4',
+    level: 'Intermediate'
+  },
+  {
+    id: 'hdr_pop',
+    category: 'Color Grading',
+    name: 'HDR Pop & Contrast',
+    desc: 'High dynamic range look with deep blacks and bright highlights',
+    command: 'ffmpeg -i input.mp4 -vf "eq=contrast=1.4:brightness=0.1, colorbalance=rs=.05:gs=.02:bs=-.03" -c:a copy output_hdr.mp4',
+    level: 'Advanced'
+  },
+  {
+    id: 'denoise_clean',
+    category: 'Denoising & Cleanup',
+    name: 'Smart Denoise + Sharpen',
+    desc: 'Reduce noise while preserving details (great for low-light footage)',
+    command: 'ffmpeg -i input.mp4 -vf "nlmeans=s=3:p=7, unsharp=5:5:0.8:5:5:0.0" -c:a copy output_denoised.mp4',
+    level: 'Advanced'
+  },
+  {
+    id: 'upscale_2x',
+    category: 'Resolution & Quality',
+    name: '2x Smart Upscale',
+    desc: 'Intelligent upscaling with detail preservation',
+    command: 'ffmpeg -i input.mp4 -vf "scale=2*iw:2*ih:flags=lanczos, unsharp=5:5:0.6" -c:a copy output_2x.mp4',
+    level: 'Intermediate'
+  },
+  {
+    id: 'audio_enhance',
+    category: 'Audio Enhancement',
+    name: 'Voice Clarity + Music Duck',
+    desc: 'Enhance voice and dynamically lower background music',
+    command: 'ffmpeg -i input.mp4 -filter_complex "[0:a]highpass=f=150,lowpass=f=8000,afftdn,compand=attacks=0.3:points=-80/-80|-20/-20|0/-15|20/-10" -c:v copy output_audio.mp4',
+    level: 'Advanced'
+  },
+  {
+    id: 'stabilize',
+    category: 'Stabilization',
+    name: 'Video Stabilizer',
+    desc: 'Reduce camera shake (great for handheld footage)',
+    command: 'ffmpeg -i input.mp4 -vf "vidstabdetect=shakiness=10:accuracy=15,vidstabtransform=smoothing=30" -c:a copy output_stable.mp4',
+    level: 'Intermediate'
+  },
+  {
+    id: 'cinematic_fade',
+    category: 'Effects & Transitions',
+    name: 'Cinematic Fade In/Out',
+    desc: 'Smooth fade in and fade out with color grading',
+    command: 'ffmpeg -i input.mp4 -vf "fade=t=in:st=0:d=1.5,fade=t=out:st=58:d=2,eq=brightness=0.08:contrast=1.2" -c:a copy output_fade.mp4',
+    level: 'Intermediate'
+  },
+  {
+    id: 'optimize_tiktok',
+    category: 'Platform Optimization',
+    name: 'TikTok/Reels Optimizer',
+    desc: 'Optimized for vertical short video platforms (1080x1920)',
+    command: 'ffmpeg -i input.mp4 -vf "scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2,eq=contrast=1.15" -c:a copy output_tiktok.mp4',
+    level: 'Beginner'
+  },
+  {
+    id: 'master_export',
+    category: 'Final Export',
+    name: 'Master Export (High Quality)',
+    desc: 'High-quality final export with good compression',
+    command: 'ffmpeg -i input.mp4 -c:v libx264 -preset slow -crf 18 -c:a aac -b:a 192k output_master.mp4',
+    level: 'Intermediate'
+  },
 ];
 
-// Helper Tools (Phase 2)
-const helperTools = [
-  { id: 'ffmpeg_basic', name: 'Basic FFmpeg Optimizer', cmd: 'ffmpeg -i input.mp4 -vf "scale=1080:-2" -c:a copy output.mp4', desc: 'Quick resolution optimization' },
-  { id: 'ffmpeg_cinematic', name: 'Cinematic Color Chain', cmd: 'ffmpeg -i input.mp4 -vf "eq=brightness=0.1:contrast=1.2:saturation=1.15,unsharp=5:5:0.8" output.mp4', desc: 'Hollywood-style color grading' },
-  { id: 'script_hooks', name: 'Hook Generator', cmd: 'Generate 5 high-retention hooks for your topic', desc: 'Psychological hook variations' },
-  { id: 'thumbnail_ideas', name: 'Thumbnail Ideas', cmd: 'Generate 6 thumbnail concepts', desc: 'High-CTR thumbnail suggestions' },
-  { id: 'caption_writer', name: 'Caption & Hashtag', cmd: 'Write engaging caption + 15 hashtags', desc: 'Platform-optimized captions' },
-  { id: 'audio_clean', name: 'Audio Cleaner', cmd: 'ffmpeg -i input.mp4 -af "highpass=f=200, lowpass=f=3000, afftdn" output.mp4', desc: 'Clean voice + reduce noise' },
-];
-
-export default function V6CompleteSystem() {
-  const [currentTab, setCurrentTab] = useState('agents');
+export default function V6FFmpegAutomation() {
+  const [currentTab, setCurrentTab] = useState('ffmpeg');
   const [executing, setExecuting] = useState(null);
   const [logs, setLogs] = useState([]);
-  const [agents, setAgents] = useState(agentData);
 
   const addLog = useCallback((message) => {
-    setLogs(prev => [...prev.slice(-15), { time: new Date().toLocaleTimeString(), message }]);
+    setLogs(prev => [...prev.slice(-12), { time: new Date().toLocaleTimeString(), message }]);
   }, []);
 
-  const updateAgent = useCallback((id, updates) => {
-    setAgents(prev => prev.map(a => a.id === id ? { ...a, ...updates } : a));
-  }, []);
-
-  const runAgent = useCallback((agent) => {
-    updateAgent(agent.id, { status: 'running' });
-    setExecuting(agent.id);
-    addLog(`[AI] ${agent.name} started`);
+  const runFFmpeg = useCallback((preset) => {
+    setExecuting(preset.id);
+    addLog(`[FFmpeg] Running: ${preset.name}`);
 
     setTimeout(() => {
-      updateAgent(agent.id, { status: 'completed' });
       setExecuting(null);
-      addLog(`[SUCCESS] ${agent.name} completed`);
-
-      if (agent.category === 'Visual') {
-        const cmd = agent.id === 'visual' 
-          ? 'ffmpeg -i input.mp4 -vf "eq=brightness=0.1:contrast=1.2:saturation=1.15,unsharp=5:5:0.8" output_cinematic.mp4'
-          : 'ffmpeg -i input.mp4 -vf "colorbalance=rs=.1" output_graded.mp4';
-        Alert.alert(agent.name, `${agent.automation}\n\nCommand copied.`);
-        Clipboard.setString(cmd);
-      } else if (agent.id === 'pipeline') {
-        Alert.alert('Full Pipeline', 'Complete production automation activated. This replaces multiple paid global platforms.');
-      } else {
-        Alert.alert(agent.name, agent.automation);
-      }
-    }, 2300);
-  }, [addLog, updateAgent]);
-
-  const runHelperTool = useCallback((tool) => {
-    addLog(`[Tool] ${tool.name} executed`);
-    if (tool.cmd.startsWith('ffmpeg')) {
-      Alert.alert(tool.name, `${tool.desc}\n\nCommand copied to clipboard.`);
-      Clipboard.setString(tool.cmd);
-    } else {
-      Alert.alert(tool.name, tool.desc);
-    }
+      addLog(`[SUCCESS] ${preset.name} command copied`);
+      
+      Alert.alert(
+        preset.name,
+        `${preset.desc}\n\nLevel: ${preset.level}\n\nCommand copied to clipboard.`
+      );
+      Clipboard.setString(preset.command);
+    }, 1800);
   }, [addLog]);
 
-  const renderAgents = () => (
+  const renderFFmpeg = () => (
     <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-      <Text style={styles.section}>AI AGENTS (Phase 1)</Text>
-      {agents.map(agent => (
-        <View key={agent.id} style={styles.card}>
-          <View style={styles.row}>
-            <View style={[styles.iconBox, { backgroundColor: agent.color + '15' }]}>
-              <Ionicons name="sparkles" size={22} color={agent.color} />
-            </View>
+      <Text style={styles.section}>FFMPEG AUTOMATION STUDIO</Text>
+      <Text style={styles.sub}>Advanced Local Commands • Replaces Paid Tools</Text>
+
+      {ffmpegPresets.map(preset => (
+        <View key={preset.id} style={styles.card}>
+          <View style={styles.headerRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.name}>{agent.name}</Text>
-              <Text style={styles.desc}>{agent.desc}</Text>
+              <Text style={styles.presetName}>{preset.name}</Text>
+              <Text style={styles.presetDesc}>{preset.desc}</Text>
             </View>
-            <View style={[styles.badge, { backgroundColor: agent.status === 'running' ? '#FFD700' : agent.status === 'completed' ? '#30D158' : '#222' }]}>
-              <Text style={styles.badgeText}>{agent.status || 'idle'}</Text>
+            <View style={[styles.levelBadge, { 
+              backgroundColor: preset.level === 'Advanced' ? '#FF6B6B' : 
+                          preset.level === 'Intermediate' ? '#FFD700' : '#30D158' 
+            }]}>
+              <Text style={styles.levelText}>{preset.level}</Text>
             </View>
           </View>
-          <Text style={styles.auto}>{agent.automation}</Text>
-          <TouchableOpacity style={[styles.btn, { backgroundColor: agent.color }]} onPress={() => runAgent(agent)} disabled={executing === agent.id}>
-            {executing === agent.id ? <ActivityIndicator color="#000" /> : <Text style={styles.btnText}>RUN AGENT</Text>}
+          
+          <Text style={styles.category}>{preset.category}</Text>
+          
+          <TouchableOpacity 
+            style={styles.runBtn} 
+            onPress={() => runFFmpeg(preset)}
+            disabled={executing === preset.id}
+          >
+            {executing === preset.id ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <ActivityIndicator color="#000" size="small" style={{ marginRight: 8 }} />
+                <Text style={styles.btnText}>GENERATING...</Text>
+              </View>
+            ) : (
+              <Text style={styles.btnText}>COPY FFMPEG COMMAND</Text>
+            )}
           </TouchableOpacity>
         </View>
       ))}
-    </ScrollView>
-  );
 
-  const renderTools = () => (
-    <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-      <Text style={styles.section}>HELPER TOOLS (Phase 2)</Text>
-      <Text style={{color:'#666', marginBottom:16}}>Ready-to-use automation (replaces paid tools)</Text>
-      {helperTools.map(tool => (
-        <TouchableOpacity key={tool.id} style={styles.toolCard} onPress={() => runHelperTool(tool)}>
-          <Text style={styles.toolName}>{tool.name}</Text>
-          <Text style={styles.toolDesc}>{tool.desc}</Text>
-        </TouchableOpacity>
-      ))}
+      {logs.length > 0 && (
+        <View style={styles.logsBox}>
+          <Text style={styles.logsTitle}>FFMPEG AUTOMATION LOG</Text>
+          {logs.map((log, index) => (
+            <Text key={index} style={styles.logItem}>• {log.time} — {log.message}</Text>
+          ))}
+        </View>
+      )}
     </ScrollView>
   );
 
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
+
       <View style={styles.header}>
-        <Text style={styles.title}>V6 <Text style={{color:'#FFD700'}}>ULTIMATE</Text></Text>
-        <View style={styles.tabs}>
-          <TouchableOpacity style={[styles.tab, currentTab === 'agents' && styles.activeTab]} onPress={() => setCurrentTab('agents')}>
-            <Text style={[styles.tabText, currentTab === 'agents' && styles.activeTabText]}>AGENTS</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.tab, currentTab === 'tools' && styles.activeTab]} onPress={() => setCurrentTab('tools')}>
-            <Text style={[styles.tabText, currentTab === 'tools' && styles.activeTabText]}>TOOLS</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.title}>V6 <Text style={{ color: '#FFD700' }}>FFMPEG</Text></Text>
+        <Text style={styles.subtitle}>DEEP AUTOMATION STUDIO</Text>
       </View>
 
-      {currentTab === 'agents' ? renderAgents() : renderTools()}
+      {renderFFmpeg()}
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>V6 CORE • 100+ AGENTS READY • LOCAL POWER</Text>
+        <Text style={styles.footerText}>V6 CORE • ADVANCED LOCAL FFMPEG • FREE PRO TOOLS</Text>
       </View>
     </View>
   );
@@ -158,28 +182,24 @@ export default function V6CompleteSystem() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
-  header: { paddingTop: 48, paddingHorizontal: 20, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: '#1f1f1f' },
+  header: { paddingTop: 48, paddingHorizontal: 20, paddingBottom: 16, alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#1f1f1f' },
   title: { fontSize: 28, fontWeight: '900', color: '#fff' },
-  tabs: { flexDirection: 'row', marginTop: 12, backgroundColor: '#111', borderRadius: 12, padding: 4 },
-  tab: { flex: 1, paddingVertical: 8, alignItems: 'center', borderRadius: 10 },
-  activeTab: { backgroundColor: '#FFD700' },
-  tabText: { color: '#888', fontWeight: '700' },
-  activeTabText: { color: '#000' },
+  subtitle: { fontSize: 13, color: '#666', letterSpacing: 2, marginTop: 4 },
   scroll: { flex: 1, paddingHorizontal: 18, paddingTop: 8 },
-  section: { color: '#fff', fontSize: 18, fontWeight: '900', marginBottom: 12 },
+  section: { color: '#fff', fontSize: 18, fontWeight: '900', marginBottom: 4 },
+  sub: { color: '#888', fontSize: 13, marginBottom: 16 },
   card: { backgroundColor: '#111', borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: '#222' },
-  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  iconBox: { width: 44, height: 44, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  name: { color: '#fff', fontSize: 15, fontWeight: '800' },
-  desc: { color: '#aaa', fontSize: 12 },
-  auto: { color: '#FFD700', fontSize: 12, marginBottom: 12, fontStyle: 'italic' },
-  badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
-  badgeText: { color: '#000', fontSize: 10, fontWeight: '900' },
-  btn: { paddingVertical: 13, borderRadius: 12, alignItems: 'center' },
+  headerRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8 },
+  presetName: { color: '#fff', fontSize: 16, fontWeight: '800' },
+  presetDesc: { color: '#aaa', fontSize: 13, marginTop: 2 },
+  category: { color: '#FFD700', fontSize: 12, marginBottom: 12 },
+  levelBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, alignSelf: 'flex-start' },
+  levelText: { color: '#000', fontSize: 10, fontWeight: '900' },
+  runBtn: { backgroundColor: '#FFD700', paddingVertical: 14, borderRadius: 12, alignItems: 'center' },
   btnText: { color: '#000', fontWeight: '900', fontSize: 14 },
-  toolCard: { backgroundColor: '#111', padding: 16, borderRadius: 14, marginBottom: 10, borderWidth: 1, borderColor: '#222' },
-  toolName: { color: '#fff', fontSize: 15, fontWeight: '700' },
-  toolDesc: { color: '#888', fontSize: 13 },
+  logsBox: { backgroundColor: '#0f0f0f', borderRadius: 14, padding: 14, marginTop: 10, borderWidth: 1, borderColor: '#222' },
+  logsTitle: { color: '#666', fontSize: 11, marginBottom: 6 },
+  logItem: { color: '#888', fontSize: 11, marginBottom: 3 },
   footer: { paddingVertical: 14, alignItems: 'center', borderTopWidth: 1, borderTopColor: '#1f1f1f' },
   footerText: { color: '#555', fontSize: 10, letterSpacing: 2 },
 });

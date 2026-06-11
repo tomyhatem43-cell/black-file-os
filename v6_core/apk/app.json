@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "V6 CORE Ultimate",
-    "slug": "v6-core-ultimate",
+    "name": "V6 Ultimate",
+    "slug": "v6-core",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#0a0a0a"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -19,16 +21,14 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0a0a0a"
-      }
+      },
+      "package": "com.v6core.ultimate"
     },
     "web": {
-      "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "1041aa6c-e2cf-408a-b684-c8a01af29ff9"
-      }
-    }
+    "plugins": [
+      "expo-dev-client"
+    ]
   }
 }

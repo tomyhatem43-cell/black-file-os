@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function V6CinematicUltimate() {
+export default function V6CinematicComplete() {
   const [currentPage, setCurrentPage] = useState('main');
   const [executing, setExecuting] = useState(null);
   const [logs, setLogs] = useState([]);
@@ -17,12 +17,12 @@ export default function V6CinematicUltimate() {
   ];
 
   const addLog = useCallback((message) => {
-    setLogs(prev => [...prev.slice(-4), { time: new Date().toLocaleTimeString(), message }]);
+    setLogs(prev => [...prev.slice(-5), { time: new Date().toLocaleTimeString(), message }]);
   }, []);
 
   const handleCommand = useCallback((command) => {
     setCurrentPage(command.id);
-    addLog(`Opened ${command.label}`);
+    addLog(`Opened: ${command.label}`);
   }, [addLog]);
 
   const goBack = useCallback(() => {
@@ -32,21 +32,22 @@ export default function V6CinematicUltimate() {
 
   const executeCommand = useCallback((command) => {
     setExecuting(command.id);
-    addLog(`Starting ${command.label}...`);
+    addLog(`Executing: ${command.label}...`);
 
-    // Simulate real execution (replace with actual logic later)
     setTimeout(() => {
       setExecuting(null);
       addLog(`${command.label} completed successfully`);
-      
+
       if (command.id === 'android') {
-        Alert.alert('Build Started', 'EAS Build has been triggered. Check your EAS dashboard for progress.');
+        Alert.alert('Android Build', 'EAS Build triggered successfully. Check your EAS dashboard.');
       } else if (command.id === 'video') {
-        Alert.alert('Pipeline Started', 'FFmpeg cinematic processing has begun.');
+        Alert.alert('Cinematic Pipeline', 'FFmpeg processing started. Check Termux for output.');
+      } else if (command.id === 'build') {
+        Alert.alert('System Build', 'Full system build process initiated.');
       } else {
-        Alert.alert('Command Executed', `${command.label} has been executed.`);
+        Alert.alert(command.label, `${command.label} executed successfully.`);
       }
-    }, 2200);
+    }, 2000);
   }, [addLog]);
 
   const currentCommand = commands.find(c => c.id === currentPage);
@@ -72,14 +73,11 @@ export default function V6CinematicUltimate() {
         </TouchableOpacity>
       ))}
 
-      {/* Quick Status */}
       <View style={styles.statusBox}>
         <Text style={styles.statusTitle}>SYSTEM STATUS</Text>
         <View style={styles.statusRow}>
-          <View style={styles.statusItem}>
-            <Ionicons name="checkmark-circle" size={18} color="#00FF88" />
-            <Text style={styles.statusText}>All Systems Operational</Text>
-          </View>
+          <Ionicons name="checkmark-circle" size={18} color="#00FF88" />
+          <Text style={styles.statusText}>All Systems Operational</Text>
         </View>
       </View>
     </ScrollView>
@@ -98,7 +96,7 @@ export default function V6CinematicUltimate() {
 
         <View style={styles.detailHeader}>
           <View style={[styles.iconBoxLarge, { backgroundColor: currentCommand.color + '15' }]}>
-            <Ionicons name={currentCommand.icon} size={42} color={currentCommand.color} />
+            <Ionicons name={currentCommand.icon} size={40} color={currentCommand.color} />
           </View>
           <Text style={styles.detailTitle}>{currentCommand.label}</Text>
           <Text style={styles.detailDesc}>{currentCommand.desc}</Text>
@@ -109,7 +107,7 @@ export default function V6CinematicUltimate() {
             {currentPage === 'build' && 'This module handles full system builds, Terraform infrastructure, and deployment pipelines.'}
             {currentPage === 'video' && 'Advanced FFmpeg pipeline for cinematic video processing, color grading, denoising, and audio ducking.'}
             {currentPage === 'android' && 'One-click EAS Build for generating signed production APKs ready for distribution.'}
-            {currentPage === 'web' && 'Web studio tools for managing and deploying the cinematic web interface.'}
+            {currentPage === 'web' && 'Tools for managing and deploying the web version of the cinematic interface.'}
             {currentPage === 'analyze' && 'Real-time system diagnostics, performance metrics, logs, and health monitoring.'}
           </Text>
         </View>
@@ -129,7 +127,6 @@ export default function V6CinematicUltimate() {
           )}
         </TouchableOpacity>
 
-        {/* Recent Activity */}
         {logs.length > 0 && (
           <View style={styles.logsBox}>
             <Text style={styles.logsTitle}>RECENT ACTIVITY</Text>

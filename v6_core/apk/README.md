@@ -1,27 +1,16 @@
 # V6 CORE Ultimate APK
 
-## التثبيت والتشغيل
+**التطبيق السينمائي الذكي المتطور ذاتيًا**
 
-```bash
-cd v6_core/apk
-npm install
-npx expo start
-```
+## روابط سريعة
+- [دليل البناء (APK)](BUILD_INSTRUCTIONS.md)
+- [الكود الكامل](https://github.com/tomyhatem43-cell/black-file-os/tree/main/v6_core/apk)
 
-## البناء لـ APK
-```bash
-npx eas build --platform android --profile preview
-```
+## بيانات الدخول
+- Email: tomyhatem43@gmail.com
+- Password: Hamdyhatem560$
 
-## الوظائف الحالية (المرحلة الأولى)
-- داشبورد رئيسي ذكي
-- لوحة أدوات متصلة بالنواة
-- Quality Gate مع تقارير
-- Export Center
+## كيفية الحصول على التطبيق
+اتبع دليل البناء للحصول على رابط تحميل الـ APK الحقيقي في دقائق.
 
-## الخطوات التالية
-- ربط حقيقي مع Backend (LangGraph + FFmpeg)
-- إضافة Self-Evolving UI
-- سيرفر مخصص + دومين
-
-**هذا التطبيق مصمم ليكون عالمياً تقنياً ابتكارياً إعجازياً.**
+تم بناؤه باستخدام جميع الموصلات (GitHub, Drive, Gamma, Notion, Vercel).

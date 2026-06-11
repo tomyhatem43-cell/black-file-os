@@ -1,14 +1,9 @@
-# Phase 2: Advanced Collective/Shared Memory - Blackboard (Enhanced)
+# Phase 2: Collective Memory - Blackboard + Integration with MemoryManager
 
 class Blackboard:
-    """
-    Advanced Blackboard for Collective Memory between meta-agents.
-    Supports posting, querying, subscriptions, and notifications.
-    """
-
     def __init__(self):
         self.posts = []
-        self.subscriptions = {}  # topic -> list of agents
+        self.subscriptions = {}
 
     def post(self, agent_name: str, topic: str, content: str, post_type: str = "info"):
         post = {
@@ -21,48 +16,59 @@ class Blackboard:
         self.posts.append(post)
         print(f"[Blackboard] {agent_name} posted on '{topic}' [{post_type}]")
 
-        # Notify subscribed agents
         if topic in self.subscriptions:
-            for subscriber in self.subscriptions[topic]:
-                if subscriber != agent_name:
-                    print(f"  -> Notifying {subscriber} about new post on '{topic}'")
+            for sub in self.subscriptions[topic]:
+                if sub != agent_name:
+                    print(f"  -> Notification sent to {sub}")
 
     def subscribe(self, agent_name: str, topic: str):
         if topic not in self.subscriptions:
             self.subscriptions[topic] = []
         if agent_name not in self.subscriptions[topic]:
             self.subscriptions[topic].append(agent_name)
-            print(f"[Blackboard] {agent_name} subscribed to '{topic}'")
 
-    def query(self, topic: str = None, post_type: str = None, limit: int = 20):
-        results = self.posts
+    def query(self, topic: str = None, limit: int = 20):
         if topic:
-            results = [p for p in results if p["topic"] == topic]
-        if post_type:
-            results = [p for p in results if p["type"] == post_type]
-        return results[-limit:]
-
-    def get_topics(self):
-        return list(set(p["topic"] for p in self.posts))
+            return [p for p in self.posts if p["topic"] == topic][-limit:]
+        return self.posts[-limit:]
 
 
-# Example: Multiple agents using the Blackboard
+class MemoryManager:
+    def __init__(self):
+        self.long_term = LongTermMemory()  # From Phase 1
+        self.blackboard = Blackboard()     # Phase 2
+
+    def prepare_context(self, state):
+        # Get from Long-term Memory
+        if state.get("current_task"):
+            knowledge = self.long_term.retrieve_relevant(state["current_task"])
+            state["context_from_long_term"] = knowledge
+
+        # Also check Blackboard for recent collective updates
+        recent_posts = self.blackboard.query(limit=5)
+        if recent_posts:
+            state["blackboard_context"] = recent_posts
+        return state
+
+    def post_to_collective(self, agent_name, topic, content):
+        self.blackboard.post(agent_name, topic, content)
+
+    def subscribe_to_topic(self, agent_name, topic):
+        self.blackboard.subscribe(agent_name, topic)
+
+
+# Example of integration
 if __name__ == "__main__":
-    bb = Blackboard()
+    manager = MemoryManager()
 
-    # Subscriptions
-    bb.subscribe("Meta-Orchestrator", "coordination")
-    bb.subscribe("Self-Balancer", "coordination")
-    bb.subscribe("Innovation Generator", "ideas")
+    # Agent subscribes to coordination topic
+    manager.subscribe_to_topic("Meta-Orchestrator", "coordination")
 
-    # Posts
-    bb.post("Meta-Orchestrator", "coordination", "Need better task distribution between agents", "request")
-    bb.post("Self-Balancer", "coordination", "Current load is high on Performance Optimizer", "status")
-    bb.post("Innovation Generator", "ideas", "Proposal: Use shared memory for real-time collaboration", "proposal")
+    # Agent posts to collective memory
+    manager.post_to_collective("Self-Balancer", "coordination", "High load detected on Performance Optimizer")
 
-    print("\n--- Coordination Posts ---")
-    for post in bb.query(topic="coordination"):
-        print(post)
+    # Another agent prepares context (will see the post)
+    state = {"current_task": "Optimize agent coordination"}
+    state = manager.prepare_context(state)
 
-    print("\n--- All Topics ---")
-    print(bb.get_topics())
+    print("\nContext prepared with both Long-term and Collective memory.")

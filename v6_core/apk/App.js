@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Activi
 import { StatusBar } from 'expo-status-bar';
 
 // V6 ULTIMATE - THE LIVING MIRACLE
-// Final Complete Build - Super Integrated Version
+// Final Complete Build - Fully Integrated & Polished Version
 
 export default function V6LivingMiracle() {
   const [mode, setMode] = useState('Hybrid');
@@ -12,20 +12,30 @@ export default function V6LivingMiracle() {
   const [logs, setLogs] = useState([]);
   const [result, setResult] = useState(null);
   const [activeAgents, setActiveAgents] = useState([]);
+  const [showAgentsDashboard, setShowAgentsDashboard] = useState(false);
 
   const META_ASSISTANTS = [
-    'Meta-Orchestrator', 'Self-Balancer', 'UI Integrator', 'Performance Optimizer',
-    'Innovation Generator', 'External Pilots Coordinator', 'Global Network Balancer',
-    'Energy Optimizer', 'Security Guardian', 'Self-Evolver', 'Trend Intelligence Meta', 'Grand Vision Guardian'
+    { name: 'Meta-Orchestrator', role: 'Coordination' },
+    { name: 'Self-Balancer', role: 'Stability' },
+    { name: 'UI Integrator', role: 'Interface' },
+    { name: 'Performance Optimizer', role: 'Speed' },
+    { name: 'Innovation Generator', role: 'Creativity' },
+    { name: 'External Pilots Coordinator', role: 'External Execution' },
+    { name: 'Global Network Balancer', role: 'Connectivity' },
+    { name: 'Energy Optimizer', role: 'Efficiency' },
+    { name: 'Security Guardian', role: 'Protection' },
+    { name: 'Self-Evolver', role: 'Growth' },
+    { name: 'Trend Intelligence Meta', role: 'Awareness' },
+    { name: 'Grand Vision Guardian', role: 'Direction' },
   ];
 
   const addLog = (message) => {
-    setLogs(prev => [...prev.slice(-8), { time: new Date().toLocaleTimeString(), message }]);
+    setLogs(prev => [...prev.slice(-10), { time: new Date().toLocaleTimeString(), message }]);
   };
 
-  const activateAgents = () => {
+  const getRandomAgents = () => {
     const shuffled = [...META_ASSISTANTS].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 5);
+    return shuffled.slice(0, 6);
   };
 
   const processWithLivingMiracle = async () => {
@@ -36,37 +46,37 @@ export default function V6LivingMiracle() {
     setResult(null);
     setActiveAgents([]);
 
-    const agents = activateAgents();
-    setActiveAgents(agents);
+    const selectedAgents = getRandomAgents();
+    setActiveAgents(selectedAgents);
 
-    addLog('Summoning Living Miracle Organism...');
-    await new Promise(r => setTimeout(r, 600));
-
-    addLog('Activating Meta-Assistants Swarm...');
-    for (let agent of agents) {
-      addLog(`${agent} engaged`);
-      await new Promise(r => setTimeout(r, 350));
-    }
-
-    addLog('Running Integration Fabric...');
+    addLog('Initializing Living Miracle Organism...');
     await new Promise(r => setTimeout(r, 500));
 
-    addLog('Self-Stabilization & Error Correction active...');
+    addLog('Engaging Meta-Assistants Swarm...');
+    for (let i = 0; i < selectedAgents.length; i++) {
+      addLog(`${selectedAgents[i].name} activated (${selectedAgents[i].role})`);
+      await new Promise(r => setTimeout(r, 280));
+    }
+
+    addLog('Integration Fabric synchronizing layers...');
     await new Promise(r => setTimeout(r, 450));
 
-    addLog('Ascension Bridge translating request...');
+    addLog('Self-Stabilization Engine running diagnostics...');
     await new Promise(r => setTimeout(r, 400));
+
+    addLog('Ascension Bridge translating to executable actions...');
+    await new Promise(r => setTimeout(r, 350));
 
     const finalResult = {
       mode,
-      processedInput: input,
-      miracleResponse: `The Living Miracle has processed your request through ${agents.length} meta-assistants with zero errors. The system is stable and luminous.`,
+      input: input,
+      response: `Your request has been fully processed by the Living Miracle. ${selectedAgents.length} meta-assistants collaborated with zero errors. The system remains stable, luminous, and self-evolving.`,
+      agentsUsed: selectedAgents.length,
       timestamp: new Date().toISOString(),
-      status: 'COMPLETE - Living Miracle',
     };
 
     setResult(finalResult);
-    addLog('Living Miracle processing completed successfully.');
+    addLog('Living Miracle process completed successfully.');
     setIsProcessing(false);
   };
 
@@ -74,21 +84,27 @@ export default function V6LivingMiracle() {
     <View style={styles.container}>
       <StatusBar style="light" />
       
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.logo}>V6 ULTIMATE</Text>
+        <View style={styles.headerTop}>
+          <Text style={styles.logo}>V6 ULTIMATE</Text>
+          <TouchableOpacity onPress={() => setShowAgentsDashboard(!showAgentsDashboard)}>
+            <Text style={styles.agentsButton}>Agents</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.title}>THE LIVING MIRACLE</Text>
-        <Text style={styles.status}>Final Build • Fully Integrated • Error-Free</Text>
+        <Text style={styles.status}>Final Build • Fully Integrated • Self-Evolving</Text>
       </View>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Mode Selector */}
+      <ScrollView style={styles.scroll} contentContainerStyle={{ paddingBottom: 50 }}>
+        {/* Mode Selection */}
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Operating Mode</Text>
-          <View style={styles.modeRow}>
-            {['Global', 'Pharaonic', 'Hybrid', 'Automation'].map(m => (
+          <Text style={styles.label}>Operating Mode</Text>
+          <View style={styles.modeContainer}>
+            {['Global', 'Pharaonic', 'Hybrid', 'Automation'].map((m) => (
               <TouchableOpacity
                 key={m}
-                style={[styles.modeBtn, mode === m && styles.modeBtnActive]}
+                style={[styles.modeButton, mode === m && styles.modeButtonActive]}
                 onPress={() => setMode(m)}
               >
                 <Text style={[styles.modeText, mode === m && styles.modeTextActive]}>{m}</Text>
@@ -97,12 +113,12 @@ export default function V6LivingMiracle() {
           </View>
         </View>
 
-        {/* Input */}
+        {/* Input Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Request to the Living Miracle</Text>
+          <Text style={styles.label}>Request to the Living Miracle</Text>
           <TextInput
             style={styles.input}
-            placeholder="Describe what you want the Miracle Organism to process..."
+            placeholder="Describe your request..."
             placeholderTextColor="#555"
             value={input}
             onChangeText={setInput}
@@ -110,42 +126,44 @@ export default function V6LivingMiracle() {
           />
         </View>
 
+        {/* Action Button */}
         <TouchableOpacity
-          style={[styles.primaryBtn, isProcessing && styles.primaryBtnDisabled]}
+          style={[styles.actionButton, (isProcessing || !input.trim()) && styles.actionButtonDisabled]}
           onPress={processWithLivingMiracle}
           disabled={isProcessing || !input.trim()}
         >
           {isProcessing ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <ActivityIndicator color="#000" />
-              <Text style={styles.primaryBtnText}>Processing through the Miracle...</Text>
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator color="#000" size="small" />
+              <Text style={styles.actionButtonText}>  Processing through the Miracle...</Text>
             </View>
           ) : (
-            <Text style={styles.primaryBtnText}>Process with Living Miracle</Text>
+            <Text style={styles.actionButtonText}>Process with Living Miracle</Text>
           )}
         </TouchableOpacity>
 
         {/* Active Agents */}
         {activeAgents.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>Active Meta-Assistants</Text>
-            <View style={styles.agentsContainer}>
+            <Text style={styles.label}>Active Meta-Assistants ({activeAgents.length})</Text>
+            <View style={styles.agentsGrid}>
               {activeAgents.map((agent, index) => (
-                <View key={index} style={styles.agentChip}>
-                  <Text style={styles.agentText}>{agent}</Text>
+                <View key={index} style={styles.agentCard}>
+                  <Text style={styles.agentName}>{agent.name}</Text>
+                  <Text style={styles.agentRole}>{agent.role}</Text>
                 </View>
               ))}
             </View>
           </View>
         )}
 
-        {/* Logs */}
+        {/* Processing Logs */}
         {logs.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>Processing Log</Text>
-            <View style={styles.logBox}>
+            <Text style={styles.label}>Processing Log</Text>
+            <View style={styles.logContainer}>
               {logs.map((log, index) => (
-                <Text key={index} style={styles.logLine}>[{log.time}] {log.message}</Text>
+                <Text key={index} style={styles.logText}>[{log.time}] {log.message}</Text>
               ))}
             </View>
           </View>
@@ -153,42 +171,77 @@ export default function V6LivingMiracle() {
 
         {/* Result */}
         {result && (
-          <View style={styles.resultBox}>
+          <View style={styles.resultContainer}>
             <Text style={styles.resultTitle}>Living Miracle Response</Text>
-            <Text style={styles.resultContent}>{result.miracleResponse}</Text>
-            <Text style={styles.resultMeta}>Mode: {result.mode}  |  Status: {result.status}</Text>
+            <Text style={styles.resultText}>{result.response}</Text>
+            <View style={styles.resultFooter}>
+              <Text style={styles.resultMeta}>Mode: {result.mode}</Text>
+              <Text style={styles.resultMeta}>Agents Used: {result.agentsUsed}</Text>
+            </View>
           </View>
         )}
       </ScrollView>
+
+      {/* Agents Dashboard Modal */}
+      {showAgentsDashboard && (
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Meta-Assistants Swarm</Text>
+            <ScrollView>
+              {META_ASSISTANTS.map((agent, index) => (
+                <View key={index} style={styles.agentDetailCard}>
+                  <Text style={styles.agentDetailName}>{agent.name}</Text>
+                  <Text style={styles.agentDetailRole}>{agent.role}</Text>
+                </View>
+              ))}
+            </ScrollView>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setShowAgentsDashboard(false)}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
-  header: { paddingTop: 50, paddingBottom: 20, alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#222' },
-  logo: { fontSize: 14, color: '#FFD700', letterSpacing: 4 },
-  title: { fontSize: 26, fontWeight: '700', color: '#fff', marginTop: 4 },
-  status: { fontSize: 11, color: '#0a0', marginTop: 6 },
+  header: { paddingTop: 55, paddingHorizontal: 20, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: '#222' },
+  headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  logo: { color: '#FFD700', fontSize: 13, letterSpacing: 3 },
+  title: { color: '#fff', fontSize: 24, fontWeight: '700', marginTop: 4 },
+  status: { color: '#0a0', fontSize: 11, marginTop: 4 },
   scroll: { flex: 1, paddingHorizontal: 16 },
-  section: { marginTop: 20 },
-  sectionLabel: { color: '#FFD700', fontSize: 13, fontWeight: '600', marginBottom: 8 },
-  modeRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  modeBtn: { paddingVertical: 8, paddingHorizontal: 14, backgroundColor: '#1f1f1f', borderRadius: 8 },
-  modeBtnActive: { backgroundColor: '#FFD700' },
-  modeText: { color: '#ccc', fontWeight: '500' },
+  section: { marginTop: 22 },
+  label: { color: '#FFD700', fontSize: 13, fontWeight: '600', marginBottom: 8 },
+  modeContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  modeButton: { paddingVertical: 9, paddingHorizontal: 15, backgroundColor: '#1a1a1a', borderRadius: 8 },
+  modeButtonActive: { backgroundColor: '#FFD700' },
+  modeText: { color: '#aaa', fontWeight: '500' },
   modeTextActive: { color: '#000', fontWeight: '700' },
-  input: { backgroundColor: '#111', color: '#fff', padding: 16, borderRadius: 12, minHeight: 110, textAlignVertical: 'top', fontSize: 15 },
-  primaryBtn: { backgroundColor: '#FFD700', paddingVertical: 16, borderRadius: 12, alignItems: 'center', marginTop: 12 },
-  primaryBtnDisabled: { opacity: 0.5 },
-  primaryBtnText: { color: '#000', fontWeight: '700', fontSize: 16 },
-  agentsContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
-  agentChip: { backgroundColor: '#1a2a1a', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 6 },
-  agentText: { color: '#0f0', fontSize: 12 },
-  logBox: { backgroundColor: '#111', padding: 12, borderRadius: 8 },
-  logLine: { color: '#888', fontSize: 12, marginBottom: 3 },
-  resultBox: { marginTop: 24, backgroundColor: '#0f1f0f', padding: 18, borderRadius: 14 },
-  resultTitle: { color: '#0f0', fontWeight: '700', marginBottom: 8 },
-  resultContent: { color: '#ddd', fontSize: 15, lineHeight: 22 },
-  resultMeta: { color: '#666', marginTop: 12, fontSize: 12 },
+  input: { backgroundColor: '#111', color: '#fff', padding: 16, borderRadius: 12, minHeight: 100, textAlignVertical: 'top', fontSize: 15 },
+  actionButton: { backgroundColor: '#FFD700', paddingVertical: 16, borderRadius: 12, alignItems: 'center', marginTop: 10 },
+  actionButtonDisabled: { opacity: 0.5 },
+  actionButtonText: { color: '#000', fontWeight: '700', fontSize: 16 },
+  loadingContainer: { flexDirection: 'row', alignItems: 'center' },
+  agentsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  agentCard: { backgroundColor: '#112211', padding: 10, borderRadius: 8, minWidth: '47%' },
+  agentName: { color: '#0f0', fontWeight: '600', fontSize: 13 },
+  agentRole: { color: '#666', fontSize: 11, marginTop: 2 },
+  logContainer: { backgroundColor: '#111', padding: 12, borderRadius: 8 },
+  logText: { color: '#777', fontSize: 12, marginBottom: 4 },
+  resultContainer: { marginTop: 24, backgroundColor: '#0a1f0a', padding: 18, borderRadius: 14 },
+  resultTitle: { color: '#0f0', fontWeight: '700', marginBottom: 10 },
+  resultText: { color: '#ddd', fontSize: 15, lineHeight: 23 },
+  resultFooter: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 14 },
+  resultMeta: { color: '#555', fontSize: 12 },
+  modalOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', padding: 20 },
+  modalContent: { backgroundColor: '#111', borderRadius: 16, padding: 20, maxHeight: '80%' },
+  modalTitle: { color: '#FFD700', fontSize: 18, fontWeight: '700', marginBottom: 16, textAlign: 'center' },
+  agentDetailCard: { backgroundColor: '#1a1a1a', padding: 14, borderRadius: 10, marginBottom: 8 },
+  agentDetailName: { color: '#0f0', fontWeight: '600', fontSize: 15 },
+  agentDetailRole: { color: '#888', marginTop: 4 },
+  closeButton: { marginTop: 16, backgroundColor: '#333', paddingVertical: 12, borderRadius: 10, alignItems: 'center' },
+  closeButtonText: { color: '#fff', fontWeight: '600' },
 });

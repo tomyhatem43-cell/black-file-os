@@ -4,8 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { FFmpegKit, ReturnCode } from 'ffmpeg-kit-react-native';
 
-// V6 with Real FFmpeg via ffmpeg-kit-react-native
-export default function V6FFmpegNPM() {
+export default function V6FFmpegReal() {
   const [title, setTitle] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState(null);
@@ -15,7 +14,7 @@ export default function V6FFmpegNPM() {
     setLogs(prev => [...prev.slice(-12), { time: new Date().toLocaleTimeString(), message }]);
   }, []);
 
-  const generateAndExecute = useCallback(async () => {
+  const processVideo = useCallback(async () => {
     if (!title.trim()) {
       Alert.alert('خطأ', 'الرجاء إدخال عنوان الفيديو');
       return;
@@ -28,7 +27,8 @@ export default function V6FFmpegNPM() {
     const safeTitle = title.replace(/\s+/g, '_').toLowerCase();
     const outputFile = `output_${safeTitle}.mp4`;
 
-    const command = `-i input.mp4 -vf "eq=brightness=0.08:contrast=1.25:saturation=1.18,unsharp=5:5:0.9:5:5:0.0" -c:a aac -b:a 192k ${outputFile}`;
+    // Advanced cinematic FFmpeg command
+    const command = `-i input.mp4 -vf "eq=brightness=0.08:contrast=1.25:saturation=1.18,unsharp=5:5:0.9:5:5:0.0,colorbalance=rs=.08:gs=.04:bs=-.05" -c:a aac -b:a 192k ${outputFile}`;
 
     addLog('جاري تنفيذ FFmpeg...');
 
@@ -41,7 +41,8 @@ export default function V6FFmpegNPM() {
         setResult({ title, outputFile, success: true });
         Alert.alert('نجاح', `تم إنشاء الفيديو: ${outputFile}`);
       } else {
-        addLog('حدث خطأ أثناء المعالجة');
+        const output = await session.getOutput();
+        addLog('خطأ في FFmpeg: ' + output);
         Alert.alert('خطأ', 'فشل تنفيذ FFmpeg');
       }
     } catch (error) {
@@ -57,8 +58,8 @@ export default function V6FFmpegNPM() {
       <StatusBar style="light" />
 
       <View style={styles.header}>
-        <Text style={styles.title}>V6 <Text style={{color: '#FFD700'}}>FFMPEG NPM</Text></Text>
-        <Text style={styles.subtitle}>تنفيذ FFmpeg عبر NPM (ffmpeg-kit)</Text>
+        <Text style={styles.title}>V6 <Text style={{color: '#FFD700'}}>FFMPEG</Text></Text>
+        <Text style={styles.subtitle}>تنفيذ حقيقي عبر NPM</Text>
       </View>
 
       <View style={styles.inputSection}>
@@ -73,13 +74,13 @@ export default function V6FFmpegNPM() {
 
         <TouchableOpacity 
           style={[styles.generateBtn, isProcessing && styles.disabled]} 
-          onPress={generateAndExecute}
+          onPress={processVideo}
           disabled={isProcessing}
         >
           {isProcessing ? (
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <ActivityIndicator color="#000" style={{ marginRight: 10 }} />
-              <Text style={styles.btnText}>جاري المعالجة...</Text>
+              <Text style={styles.btnText}>جاري المعالجة بـ FFmpeg...</Text>
             </View>
           ) : (
             <Text style={styles.btnText}>توليد وتنفيذ الفيديو</Text>
@@ -89,7 +90,7 @@ export default function V6FFmpegNPM() {
 
       {result && (
         <View style={styles.resultSection}>
-          <Text style={styles.resultTitle}>تم إنشاء الفيديو</Text>
+          <Text style={styles.resultTitle}>تم إنشاء الفيديو بنجاح</Text>
           <Text style={styles.resultValue}>الملف: {result.outputFile}</Text>
         </View>
       )}
@@ -104,7 +105,7 @@ export default function V6FFmpegNPM() {
       )}
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>V6 CORE • FFmpeg عبر NPM</Text>
+        <Text style={styles.footerText}>V6 CORE • FFmpeg حقيقي عبر NPM</Text>
       </View>
     </View>
   );

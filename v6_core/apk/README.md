@@ -1,16 +1,25 @@
-# V6 CORE Ultimate APK
+# V6 CORE Ultimate - Cinematic AI Studio
 
-**التطبيق السينمائي الذكي المتطور ذاتيًا**
+## Quick Start (Termux)
 
-## روابط سريعة
-- [دليل البناء (APK)](BUILD_INSTRUCTIONS.md)
-- [الكود الكامل](https://github.com/tomyhatem43-cell/black-file-os/tree/main/v6_core/apk)
+```bash
+cd ~/V6_CORE/black-file-os/v6_core/apk
+npm install
+npx expo start --web --lan --clear
+```
 
-## بيانات الدخول
+## Build APK
+
+```bash
+eas build --platform android --profile preview
+```
+
+## Features
+- Cinematic dark theme
+- Self-evolving memory
+- FFmpeg pipeline ready
+- Multi-platform support (Android + Web)
+
+## Login Credentials (for testing)
 - Email: tomyhatem43@gmail.com
 - Password: Hamdyhatem560$
-
-## كيفية الحصول على التطبيق
-اتبع دليل البناء للحصول على رابط تحميل الـ APK الحقيقي في دقائق.
-
-تم بناؤه باستخدام جميع الموصلات (GitHub, Drive, Gamma, Notion, Vercel).

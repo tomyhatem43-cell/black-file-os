@@ -42,6 +42,15 @@ npm install
 eas login
 eas build:configure
 
-echo "\n=== الإعداد اكتمل ==="
-echo "الآن نفذ: npx expo start"
-echo "ثم افتح Expo Go على هاتفك وامسح الـ QR Code"
+echo "\n=== الإعداد اكتمل بنجاح ==="
+echo "سيتم تشغيل خادم Expo تلقائياً الآن..."
+
+echo "\nلتشغيل الخادم في جلسة tmux منفصلة (موصى به):"
+echo "tmux new-session -d -s v6expo 'cd ~/V6_CORE/black-file-os/v6_core/apk && npx expo start'"
+echo "tmux attach -t v6expo"
+
+echo "\nأو شغّل يدوياً: npx expo start"
+
+echo "\nبعد تشغيل الخادم، افتح Expo Go على هاتفك وامسح الـ QR Code"
+
+echo "\nللدخول إلى التطبيق استخدم: tomyhatem43@gmail.com / Hamdyhatem560$"

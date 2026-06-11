@@ -1,175 +1,121 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Alert, Clipboard } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function V6CinematicFinal() {
-  const [currentPage, setCurrentPage] = useState('main');
+export default function V6CinematicAgents() {
+  const [currentTab, setCurrentTab] = useState('agents');
   const [executing, setExecuting] = useState(null);
   const [logs, setLogs] = useState([]);
-  const [error, setError] = useState(null);
-
-  const commands = [
-    { id: 'build', label: 'BUILD SYSTEM', desc: 'Infrastructure & Deployment', icon: 'construct-outline', color: '#FFD700' },
-    { id: 'video', label: 'CINEMATIC PIPELINE', desc: 'FFmpeg Processing & Effects', icon: 'videocam-outline', color: '#00D4FF' },
-    { id: 'android', label: 'ANDROID BUILD', desc: 'Production APK Generation', icon: 'logo-android', color: '#3DDC84' },
-    { id: 'web', label: 'WEB STUDIO', desc: 'Web Interface & Deployment', icon: 'globe-outline', color: '#FF6B6B' },
-    { id: 'analyze', label: 'SYSTEM ANALYSIS', desc: 'Diagnostics & Monitoring', icon: 'analytics-outline', color: '#A855F7' },
-  ];
+  const [agents, setAgents] = useState([
+    { id: 'trend', name: 'Trend Intelligence', status: 'idle', desc: 'Analyzes viral trends for short videos', color: '#00D4FF' },
+    { id: 'script', name: 'Script Generation', status: 'idle', desc: 'Creates high-retention scripts with hooks', color: '#FFD700' },
+    { id: 'visual', name: 'Visual & FFmpeg', status: 'idle', desc: 'Handles video generation, effects, color grading', color: '#FF6B6B' },
+    { id: 'editor', name: 'Editor Agent', status: 'idle', desc: 'Advanced editing, pacing, music sync', color: '#A855F7' },
+    { id: 'distribution', name: 'Distribution', status: 'idle', desc: 'Optimizes for TikTok, Reels, Shorts', color: '#3DDC84' },
+  ]);
 
   const addLog = useCallback((message) => {
-    setLogs(prev => [...prev.slice(-7), { time: new Date().toLocaleTimeString(), message }]);
+    setLogs(prev => [...prev.slice(-8), { time: new Date().toLocaleTimeString(), message }]);
   }, []);
 
-  const handleError = useCallback((err) => {
-    const errorMsg = err.message || 'An unknown error occurred';
-    setError(errorMsg);
-    addLog(`Error: ${errorMsg}`);
-    setTimeout(() => setError(null), 6000);
-  }, [addLog]);
-
-  const handleCommand = useCallback((command) => {
-    try {
-      setCurrentPage(command.id);
-      addLog(`Opened: ${command.label}`);
-    } catch (err) {
-      handleError(err);
-    }
-  }, [addLog, handleError]);
-
-  const goBack = useCallback(() => {
-    setCurrentPage('main');
-    setExecuting(null);
-    setError(null);
+  const updateAgentStatus = useCallback((id, status) => {
+    setAgents(prev => prev.map(agent => 
+      agent.id === id ? { ...agent, status } : agent
+    ));
   }, []);
 
-  const executeCommand = useCallback((command) => {
-    setExecuting(command.id);
-    addLog(`Starting: ${command.label}...`);
+  const runAgent = useCallback((agent) => {
+    setExecuting(agent.id);
+    updateAgentStatus(agent.id, 'running');
+    addLog(`Agent ${agent.name} started...`);
 
-    try {
-      setTimeout(() => {
-        setExecuting(null);
-        addLog(`Completed: ${command.label}`);
+    setTimeout(() => {
+      updateAgentStatus(agent.id, 'completed');
+      setExecuting(null);
+      addLog(`Agent ${agent.name} completed successfully`);
 
-        if (command.id === 'android') {
-          Alert.alert(
-            'Android Build', 
-            'EAS Build triggered successfully.\n\nMonitor progress in your EAS dashboard or run: eas build --status', 
-            [
-              { text: 'Copy Command', onPress: () => Clipboard.setString('eas build --platform android --profile production') },
-              { text: 'OK' }
-            ]
-          );
-        } else if (command.id === 'video') {
-          const ffmpegExample = 'ffmpeg -i input.mp4 -vf "eq=brightness=0.05:contrast=1.1" -c:a copy output.mp4';
-          Alert.alert(
-            'Cinematic Pipeline', 
-            'FFmpeg command ready for Termux.\n\nExample command copied to clipboard.', 
-            [
-              { text: 'Copy FFmpeg Command', onPress: () => Clipboard.setString(ffmpegExample) },
-              { text: 'OK' }
-            ]
-          );
-          Clipboard.setString(ffmpegExample);
-        } else if (command.id === 'build') {
-          Alert.alert('System Build', 'Full system build process initiated.\nCheck Termux logs for details.');
-        } else if (command.id === 'analyze') {
-          Alert.alert('System Analysis', 'All core systems are healthy.\nNo critical errors detected.');
-        } else {
-          Alert.alert(command.label, `${command.label} executed successfully.`);
-        }
-      }, 1800);
-    } catch (err) {
-      handleError(err);
-    }
-  }, [addLog, handleError]);
+      // Link to commands
+      if (agent.id === 'trend') {
+        Alert.alert('Trend Agent', 'Trend analysis complete. Ready for script generation.');
+      } else if (agent.id === 'script') {
+        Alert.alert('Script Agent', 'High-retention script generated with strong hook.');
+      } else if (agent.id === 'visual') {
+        Alert.alert('Visual Agent', 'Cinematic visuals ready. FFmpeg pipeline prepared.');
+      } else if (agent.id === 'editor') {
+        Alert.alert('Editor Agent', 'Video edited with perfect pacing and music.');
+      } else if (agent.id === 'distribution') {
+        Alert.alert('Distribution Agent', 'Optimized for all short video platforms.');
+      }
+    }, 2200);
+  }, [addLog, updateAgentStatus]);
 
-  const currentCommand = commands.find(c => c.id === currentPage);
-
-  const renderMainMenu = () => (
+  const renderAgents = () => (
     <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-      <Text style={styles.section}>COMMAND CENTER</Text>
-      {commands.map(cmd => (
-        <TouchableOpacity key={cmd.id} style={styles.card} onPress={() => handleCommand(cmd)} activeOpacity={0.9}>
-          <View style={[styles.iconBox, { backgroundColor: cmd.color + '12' }]}>
-            <Ionicons name={cmd.icon} size={26} color={cmd.color} />
+      <Text style={styles.section}>AI AGENTS CREW</Text>
+      {agents.map(agent => (
+        <View key={agent.id} style={styles.agentCard}>
+          <View style={styles.agentHeader}>
+            <View style={[styles.iconBox, { backgroundColor: agent.color + '15' }]}>
+              <Ionicons name="person-outline" size={24} color={agent.color} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.agentName}>{agent.name}</Text>
+              <Text style={styles.agentDesc}>{agent.desc}</Text>
+            </View>
+            <View style={[styles.statusBadge, { 
+              backgroundColor: agent.status === 'running' ? '#FFD700' : 
+                          agent.status === 'completed' ? '#00FF88' : '#333' 
+            }]}>
+              <Text style={styles.statusText}>{agent.status.toUpperCase()}</Text>
+            </View>
           </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.cardTitle}>{cmd.label}</Text>
-            <Text style={styles.cardDesc}>{cmd.desc}</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={22} color="#555" />
-        </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.runButton, { backgroundColor: agent.color }]} 
+            onPress={() => runAgent(agent)}
+            disabled={executing === agent.id || agent.status === 'running'}
+          >
+            {executing === agent.id ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <ActivityIndicator color="#000" size="small" style={{ marginRight: 8 }} />
+                <Text style={styles.runText}>RUNNING...</Text>
+              </View>
+            ) : (
+              <Text style={styles.runText}>RUN AGENT</Text>
+            )}
+          </TouchableOpacity>
+        </View>
       ))}
 
-      <View style={styles.statusBox}>
-        <Text style={styles.statusTitle}>SYSTEM STATUS</Text>
-        <View style={styles.statusRow}>
-          <Ionicons name="checkmark-circle" size={18} color="#00FF88" />
-          <Text style={styles.statusText}>All Systems Operational</Text>
+      {logs.length > 0 && (
+        <View style={styles.logsBox}>
+          <Text style={styles.logsTitle}>AGENT ACTIVITY LOG</Text>
+          {logs.map((log, index) => (
+            <Text key={index} style={styles.logItem}>• {log.time} — {log.message}</Text>
+          ))}
         </View>
-      </View>
+      )}
     </ScrollView>
   );
 
-  const renderDetail = () => {
-    if (!currentCommand) return null;
-    const isExecuting = executing === currentPage;
-
-    return (
-      <View style={styles.detailContainer}>
-        <TouchableOpacity onPress={goBack} style={styles.backRow}>
-          <Ionicons name="arrow-back" size={22} color="#FFD700" />
-          <Text style={styles.backLabel}>Back to Command Center</Text>
-        </TouchableOpacity>
-
-        <View style={styles.detailHeader}>
-          <View style={[styles.iconBoxLarge, { backgroundColor: currentCommand.color + '15' }]}>
-            <Ionicons name={currentCommand.icon} size={40} color={currentCommand.color} />
-          </View>
-          <Text style={styles.detailTitle}>{currentCommand.label}</Text>
-          <Text style={styles.detailDesc}>{currentCommand.desc}</Text>
-        </View>
-
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>
-            {currentPage === 'build' && 'This module handles full system builds, Terraform infrastructure, and deployment pipelines.'}
-            {currentPage === 'video' && 'Advanced FFmpeg pipeline for cinematic video processing, color grading, denoising, and audio ducking.'}
-            {currentPage === 'android' && 'One-click EAS Build for generating signed production APKs ready for distribution.'}
-            {currentPage === 'web' && 'Tools for managing and deploying the web version of the cinematic interface.'}
-            {currentPage === 'analyze' && 'Real-time system diagnostics, performance metrics, logs, and health monitoring.'}
-          </Text>
-        </View>
-
-        <TouchableOpacity 
-          style={[styles.execButton, { backgroundColor: currentCommand.color }]} 
-          onPress={() => executeCommand(currentCommand)}
-          disabled={isExecuting}
-        >
-          {isExecuting ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <ActivityIndicator color="#000" size="small" style={{ marginRight: 10 }} />
-              <Text style={styles.execText}>PROCESSING...</Text>
-            </View>
-          ) : (
-            <Text style={styles.execText}>EXECUTE COMMAND</Text>
-          )}
-        </TouchableOpacity>
-
-        {error && <Text style={styles.errorText}>⚠️ {error}</Text>}
-
-        {logs.length > 0 && (
-          <View style={styles.logsBox}>
-            <Text style={styles.logsTitle}>RECENT ACTIVITY</Text>
-            {logs.map((log, index) => (
-              <Text key={index} style={styles.logItem}>• {log.time} — {log.message}</Text>
-            ))}
-          </View>
-        )}
-      </View>
-    );
-  };
+  const renderCommands = () => (
+    <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+      <Text style={styles.section}>COMMAND CENTER</Text>
+      <Text style={{ color: '#666', marginBottom: 16, fontSize: 13 }}>
+        Quick commands linked to agents
+      </Text>
+      {/* Simplified command buttons that trigger agents */}
+      <TouchableOpacity style={styles.commandCard} onPress={() => { setCurrentTab('agents'); runAgent(agents[0]); }}>
+        <Text style={styles.commandText}>Run Trend Agent</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.commandCard} onPress={() => { setCurrentTab('agents'); runAgent(agents[1]); }}>
+        <Text style={styles.commandText}>Run Script Agent</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.commandCard} onPress={() => { setCurrentTab('agents'); runAgent(agents[2]); }}>
+        <Text style={styles.commandText}>Run Visual Agent</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
 
   return (
     <View style={styles.container}>
@@ -180,18 +126,28 @@ export default function V6CinematicFinal() {
           <Text style={styles.brand}>V6</Text>
           <Text style={styles.brandGold}>CINEMATIC</Text>
         </View>
-        <Text style={styles.tagline}>CONTROL SYSTEM</Text>
+        <Text style={styles.tagline}>MULTI-AGENT CONTROL SYSTEM</Text>
 
-        <View style={styles.statusPill}>
-          <View style={styles.dot} />
-          <Text style={styles.status}>SYSTEM READY</Text>
+        <View style={styles.tabBar}>
+          <TouchableOpacity 
+            style={[styles.tab, currentTab === 'agents' && styles.activeTab]} 
+            onPress={() => setCurrentTab('agents')}
+          >
+            <Text style={[styles.tabText, currentTab === 'agents' && styles.activeTabText]}>AGENTS</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.tab, currentTab === 'commands' && styles.activeTab]} 
+            onPress={() => setCurrentTab('commands')}
+          >
+            <Text style={[styles.tabText, currentTab === 'commands' && styles.activeTabText]}>COMMANDS</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
-      {currentPage === 'main' ? renderMainMenu() : renderDetail()}
+      {currentTab === 'agents' ? renderAgents() : renderCommands()}
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>V6 CORE ULTIMATE  •  CINEMATIC AI PRODUCTION STUDIO</Text>
+        <Text style={styles.footerText}>V6 CORE ULTIMATE • SELF-EVOLVING CINEMATIC AI</Text>
       </View>
     </View>
   );
@@ -199,34 +155,31 @@ export default function V6CinematicFinal() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
-  header: { paddingTop: 48, paddingHorizontal: 22, paddingBottom: 16, alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#1a1a1a' },
-  brand: { fontSize: 30, fontWeight: '800', color: '#fff', letterSpacing: 1 },
-  brandGold: { fontSize: 30, fontWeight: '800', color: '#FFD700', letterSpacing: 1, marginLeft: 4 },
-  tagline: { fontSize: 11, color: '#666', letterSpacing: 3, marginTop: 2 },
-  statusPill: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#111', paddingHorizontal: 11, paddingVertical: 5, borderRadius: 20, marginTop: 12 },
-  dot: { width: 6, height: 6, backgroundColor: '#00FF88', borderRadius: 3, marginRight: 7 },
-  status: { color: '#00FF88', fontSize: 10, fontWeight: '700' },
-  scroll: { flex: 1, paddingHorizontal: 18, paddingTop: 6 },
-  section: { color: '#555', fontSize: 11, letterSpacing: 3, marginBottom: 12, marginLeft: 6 },
-  card: { backgroundColor: '#111', borderRadius: 14, flexDirection: 'row', alignItems: 'center', padding: 15, marginBottom: 9, borderWidth: 1, borderColor: '#1f1f1f' },
-  iconBox: { width: 46, height: 46, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginRight: 13 },
-  cardTitle: { color: '#fff', fontSize: 15, fontWeight: '700' },
-  cardDesc: { color: '#777', fontSize: 12, marginTop: 2 },
-  detailContainer: { flex: 1, paddingHorizontal: 20, paddingTop: 6 },
-  backRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
-  backLabel: { color: '#FFD700', fontSize: 15, marginLeft: 8, fontWeight: '600' },
-  iconBoxLarge: { width: 76, height: 76, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginBottom: 12 },
-  detailHeader: { alignItems: 'center', marginBottom: 24 },
-  detailTitle: { color: '#fff', fontSize: 22, fontWeight: '800', marginBottom: 5 },
-  detailDesc: { color: '#888', fontSize: 14, textAlign: 'center' },
-  infoBox: { backgroundColor: '#111', borderRadius: 14, padding: 20, marginBottom: 24, borderWidth: 1, borderColor: '#222' },
-  infoText: { color: '#aaa', fontSize: 14, lineHeight: 22, textAlign: 'center' },
-  execButton: { paddingVertical: 16, borderRadius: 14, alignItems: 'center', marginTop: 10 },
-  execText: { color: '#000', fontSize: 15, fontWeight: '800', letterSpacing: 1 },
-  errorText: { color: '#FF6B6B', fontSize: 13, textAlign: 'center', marginTop: 8, fontWeight: '600' },
-  logsBox: { backgroundColor: '#0f0f0f', borderRadius: 12, padding: 16, marginTop: 20, borderWidth: 1, borderColor: '#222' },
-  logsTitle: { color: '#666', fontSize: 11, marginBottom: 8, letterSpacing: 1 },
-  logItem: { color: '#888', fontSize: 11, marginBottom: 3 },
+  header: { paddingTop: 48, paddingHorizontal: 20, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: '#1a1a1a' },
+  brand: { fontSize: 28, fontWeight: '800', color: '#fff' },
+  brandGold: { fontSize: 28, fontWeight: '800', color: '#FFD700', marginLeft: 4 },
+  tagline: { fontSize: 11, color: '#666', letterSpacing: 2, marginTop: 4 },
+  tabBar: { flexDirection: 'row', marginTop: 16, backgroundColor: '#111', borderRadius: 12, padding: 4 },
+  tab: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 10 },
+  activeTab: { backgroundColor: '#FFD700' },
+  tabText: { color: '#888', fontWeight: '700' },
+  activeTabText: { color: '#000' },
+  scroll: { flex: 1, paddingHorizontal: 18, paddingTop: 10 },
+  section: { color: '#fff', fontSize: 16, fontWeight: '700', marginBottom: 16, letterSpacing: 1 },
+  agentCard: { backgroundColor: '#111', borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: '#222' },
+  agentHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  iconBox: { width: 48, height: 48, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  agentName: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  agentDesc: { color: '#777', fontSize: 13, marginTop: 2 },
+  statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
+  statusText: { color: '#000', fontSize: 10, fontWeight: '800' },
+  runButton: { paddingVertical: 12, borderRadius: 12, alignItems: 'center' },
+  runText: { color: '#000', fontWeight: '800', fontSize: 14 },
+  commandCard: { backgroundColor: '#111', padding: 18, borderRadius: 14, marginBottom: 10, borderWidth: 1, borderColor: '#222' },
+  commandText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  logsBox: { backgroundColor: '#0f0f0f', borderRadius: 12, padding: 16, marginTop: 16, borderWidth: 1, borderColor: '#222' },
+  logsTitle: { color: '#666', fontSize: 12, marginBottom: 8 },
+  logItem: { color: '#888', fontSize: 12, marginBottom: 4 },
   footer: { paddingVertical: 14, alignItems: 'center', borderTopWidth: 1, borderTopColor: '#1a1a1a' },
   footerText: { color: '#444', fontSize: 9, letterSpacing: 2 },
 });

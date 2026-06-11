@@ -3,116 +3,100 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
-// Video Conversion Tools
-const videoConversionTools = [
+// Image Processing Tools
+const imageProcessingTools = [
   {
-    id: 'to_mp4_h264',
+    id: 'convert_jpg_png',
     category: 'Format Conversion',
-    name: 'Convert to MP4 (H.264)',
-    desc: 'Standard high compatibility MP4 conversion',
-    command: 'ffmpeg -i input.mp4 -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k output.mp4',
+    name: 'Convert JPG to PNG',
+    desc: 'Convert image format from JPG to PNG (lossless)',
+    command: 'convert input.jpg output.png',
     level: 'Beginner'
   },
   {
-    id: 'to_mp4_h265',
+    id: 'convert_png_webp',
     category: 'Format Conversion',
-    name: 'Convert to MP4 (H.265/HEVC)',
-    desc: 'Better compression with H.265 codec',
-    command: 'ffmpeg -i input.mp4 -c:v libx265 -preset medium -crf 28 -c:a aac -b:a 128k output_h265.mp4',
+    name: 'Convert PNG to WebP',
+    desc: 'Modern format with better compression',
+    command: 'convert input.png -quality 85 output.webp',
     level: 'Intermediate'
   },
   {
-    id: 'to_webm',
-    category: 'Format Conversion',
-    name: 'Convert to WebM (VP9)',
-    desc: 'Web-optimized format with good quality',
-    command: 'ffmpeg -i input.mp4 -c:v libvpx-vp9 -crf 30 -b:v 0 -c:a libopus output.webm',
+    id: 'resize_1080',
+    category: 'Resize & Optimize',
+    name: 'Resize to 1080px Width',
+    desc: 'Resize image while maintaining aspect ratio',
+    command: 'convert input.jpg -resize 1080x output_1080.jpg',
+    level: 'Beginner'
+  },
+  {
+    id: 'resize_thumbnail',
+    category: 'Resize & Optimize',
+    name: 'Create Thumbnail (300px)',
+    desc: 'Create small thumbnail for previews',
+    command: 'convert input.jpg -resize 300x -quality 85 thumbnail.jpg',
+    level: 'Beginner'
+  },
+  {
+    id: 'batch_resize',
+    category: 'Resize & Optimize',
+    name: 'Batch Resize All Images',
+    desc: 'Resize all JPGs in folder to 1080px',
+    command: 'for img in *.jpg; do convert "$img" -resize 1080x "resized_$img"; done',
     level: 'Intermediate'
   },
   {
-    id: 'to_mov',
-    category: 'Format Conversion',
-    name: 'Convert to MOV (ProRes)',
-    desc: 'High quality editing format (large file size)',
-    command: 'ffmpeg -i input.mp4 -c:v prores_ks -profile:v 3 -c:a pcm_s16le output.mov',
+    id: 'add_watermark',
+    category: 'Branding',
+    name: 'Add Watermark (Bottom Right)',
+    desc: 'Add semi-transparent watermark to image',
+    command: 'composite -gravity southeast -geometry +20+20 watermark.png input.jpg output_watermarked.jpg',
+    level: 'Intermediate'
+  },
+  {
+    id: 'image_to_video',
+    category: 'Video Creation',
+    name: 'Image Sequence to Video',
+    desc: 'Convert folder of images to video (25fps)',
+    command: 'ffmpeg -framerate 25 -pattern_type glob -i "*.jpg" -c:v libx264 -pix_fmt yuv420p output.mp4',
+    level: 'Intermediate'
+  },
+  {
+    id: 'extract_frames',
+    category: 'Video Creation',
+    name: 'Extract Frames from Video',
+    desc: 'Extract all frames as images (for editing)',
+    command: 'ffmpeg -i input.mp4 -vf fps=1 frame_%04d.jpg',
+    level: 'Intermediate'
+  },
+  {
+    id: 'cinematic_thumbnail',
+    category: 'Thumbnail Creation',
+    name: 'Cinematic Thumbnail Style',
+    desc: 'Apply cinematic color grade to thumbnail',
+    command: 'convert input.jpg -modulate 100,120,100 -color-matrix "0.9 0.1 0 0 0.1 0.9 0 0 0 0 1 0" output_cinematic.jpg',
     level: 'Advanced'
   },
   {
-    id: 'to_720p',
-    category: 'Resolution',
-    name: 'Convert to 720p',
-    desc: 'Resize to 1280x720 while maintaining aspect ratio',
-    command: 'ffmpeg -i input.mp4 -vf "scale=1280:-2" -c:a copy output_720p.mp4',
-    level: 'Beginner'
-  },
-  {
-    id: 'to_1080p',
-    category: 'Resolution',
-    name: 'Convert to 1080p',
-    desc: 'Resize to Full HD (1920x1080)',
-    command: 'ffmpeg -i input.mp4 -vf "scale=1920:-2" -c:a copy output_1080p.mp4',
-    level: 'Beginner'
-  },
-  {
-    id: 'to_4k',
-    category: 'Resolution',
-    name: 'Convert to 4K',
-    desc: 'Upscale/convert to 3840x2160',
-    command: 'ffmpeg -i input.mp4 -vf "scale=3840:-2" -c:a copy output_4k.mp4',
+    id: 'auto_enhance',
+    category: 'Enhancement',
+    name: 'Auto Enhance Image',
+    desc: 'Automatic brightness, contrast and color correction',
+    command: 'convert input.jpg -auto-gamma -auto-level -modulate 100,110,100 output_enhanced.jpg',
     level: 'Intermediate'
   },
   {
-    id: 'change_fps_30',
-    category: 'Frame Rate',
-    name: 'Change to 30 FPS',
-    desc: 'Convert video frame rate to 30fps',
-    command: 'ffmpeg -i input.mp4 -r 30 -c:v libx264 -preset medium -crf 23 -c:a copy output_30fps.mp4',
-    level: 'Intermediate'
-  },
-  {
-    id: 'change_fps_60',
-    category: 'Frame Rate',
-    name: 'Change to 60 FPS',
-    desc: 'Convert video to smooth 60fps',
-    command: 'ffmpeg -i input.mp4 -r 60 -c:v libx264 -preset medium -crf 23 -c:a copy output_60fps.mp4',
-    level: 'Intermediate'
-  },
-  {
-    id: 'extract_audio',
-    category: 'Audio Extraction',
-    name: 'Extract Audio Only (MP3)',
-    desc: 'Extract audio track as high quality MP3',
-    command: 'ffmpeg -i input.mp4 -q:a 0 -map a output_audio.mp3',
-    level: 'Beginner'
-  },
-  {
-    id: 'extract_audio_wav',
-    category: 'Audio Extraction',
-    name: 'Extract Audio (WAV - Uncompressed)',
-    desc: 'Extract lossless audio for editing',
-    command: 'ffmpeg -i input.mp4 -vn -acodec pcm_s16le output_audio.wav',
-    level: 'Beginner'
-  },
-  {
-    id: 'compress_small',
-    category: 'Optimization',
-    name: 'Compress for Smaller Size',
-    desc: 'Reduce file size while keeping good quality',
-    command: 'ffmpeg -i input.mp4 -c:v libx264 -crf 28 -preset slower -c:a aac -b:a 96k output_small.mp4',
-    level: 'Intermediate'
-  },
-  {
-    id: 'vertical_9_16',
-    category: 'Platform Specific',
-    name: 'Convert to Vertical 9:16',
-    desc: 'Convert horizontal video to vertical (TikTok/Reels)',
-    command: 'ffmpeg -i input.mp4 -vf "scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2" -c:a copy output_vertical.mp4',
+    id: 'remove_background',
+    category: 'Advanced Editing',
+    name: 'Remove Background (Simple)',
+    desc: 'Basic background removal (works best with solid backgrounds)',
+    command: 'convert input.jpg -fuzz 20% -transparent white output_transparent.png',
     level: 'Intermediate'
   },
 ];
 
-export default function V6VideoConversionTools() {
-  const [currentTab, setCurrentTab] = useState('conversion');
+export default function V6ImageProcessingTools() {
+  const [currentTab, setCurrentTab] = useState('images');
   const [executing, setExecuting] = useState(null);
   const [logs, setLogs] = useState([]);
 
@@ -120,9 +104,9 @@ export default function V6VideoConversionTools() {
     setLogs(prev => [...prev.slice(-12), { time: new Date().toLocaleTimeString(), message }]);
   }, []);
 
-  const runConversion = useCallback((tool) => {
+  const runImageTool = useCallback((tool) => {
     setExecuting(tool.id);
-    addLog(`[Conversion] ${tool.name}`);
+    addLog(`[Image] ${tool.name}`);
 
     setTimeout(() => {
       setExecuting(null);
@@ -133,15 +117,15 @@ export default function V6VideoConversionTools() {
         `${tool.desc}\n\nLevel: ${tool.level}\n\nCommand copied to clipboard.`
       );
       Clipboard.setString(tool.command);
-    }, 1600);
+    }, 1400);
   }, [addLog]);
 
-  const renderConversionTools = () => (
+  const renderImageTools = () => (
     <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-      <Text style={styles.section}>VIDEO CONVERSION TOOLS</Text>
-      <Text style={styles.sub}>Format • Resolution • Frame Rate • Audio • Optimization</Text>
+      <Text style={styles.section}>IMAGE PROCESSING TOOLS</Text>
+      <Text style={styles.sub}>Format • Resize • Watermark • Video Creation • Enhancement</Text>
 
-      {videoConversionTools.map(tool => (
+      {imageProcessingTools.map(tool => (
         <View key={tool.id} style={styles.card}>
           <View style={styles.headerRow}>
             <View style={{ flex: 1 }}>
@@ -160,7 +144,7 @@ export default function V6VideoConversionTools() {
           
           <TouchableOpacity 
             style={styles.runBtn} 
-            onPress={() => runConversion(tool)}
+            onPress={() => runImageTool(tool)}
             disabled={executing === tool.id}
           >
             {executing === tool.id ? (
@@ -177,7 +161,7 @@ export default function V6VideoConversionTools() {
 
       {logs.length > 0 && (
         <View style={styles.logsBox}>
-          <Text style={styles.logsTitle}>CONVERSION LOG</Text>
+          <Text style={styles.logsTitle}>IMAGE PROCESSING LOG</Text>
           {logs.map((log, index) => (
             <Text key={index} style={styles.logItem}>• {log.time} — {log.message}</Text>
           ))}
@@ -191,14 +175,14 @@ export default function V6VideoConversionTools() {
       <StatusBar style="light" />
 
       <View style={styles.header}>
-        <Text style={styles.title}>V6 <Text style={{ color: '#FFD700' }}>CONVERSION</Text></Text>
-        <Text style={styles.subtitle}>VIDEO CONVERSION STUDIO</Text>
+        <Text style={styles.title}>V6 <Text style={{ color: '#FFD700' }}>IMAGES</Text></Text>
+        <Text style={styles.subtitle}>IMAGE PROCESSING STUDIO</Text>
       </View>
 
-      {renderConversionTools()}
+      {renderImageTools()}
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>V6 CORE • VIDEO CONVERSION TOOLS • LOCAL POWER</Text>
+        <Text style={styles.footerText}>V6 CORE • IMAGE TOOLS • LOCAL PRODUCTION</Text>
       </View>
     </View>
   );

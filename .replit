@@ -1,0 +1,15 @@
+run = "bash v6_core/V6_CORE_FINAL_v3_COMPLETE.sh"
+entrypoint = "v6_core/V6_CORE_FINAL_v3_COMPLETE.sh"
+
+[env]
+PYTHONUNBUFFERED = "1"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 8080
+externalPort = 80

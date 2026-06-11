@@ -1,91 +1,157 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { Ionicons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 
-export default function App() {
-  const [activeCommand, setActiveCommand] = useState(null);
+export default function V6CinematicInterface() {
+  const [currentPage, setCurrentPage] = useState('main');
 
   const commands = [
-    { id: 'build', label: 'BUILD SYSTEM', description: 'Build complete system layer', icon: '🔧' },
-    { id: 'video', label: 'CINEMATIC PIPELINE', description: 'Advanced FFmpeg video processing', icon: '🎬' },
-    { id: 'android', label: 'ANDROID BUILD', description: 'Generate production APK', icon: '📱' },
-    { id: 'web', label: 'WEB STUDIO', description: 'Launch web version', icon: '🌐' },
-    { id: 'analyze', label: 'SYSTEM ANALYSIS', description: 'Full system diagnostics', icon: '🔍' },
+    { 
+      id: 'build', 
+      label: 'BUILD SYSTEM', 
+      description: 'Build complete system layer & infrastructure', 
+      icon: 'construct-outline',
+      iconLib: 'Ionicons',
+      color: '#FFD700'
+    },
+    { 
+      id: 'video', 
+      label: 'CINEMATIC PIPELINE', 
+      description: 'Advanced FFmpeg video processing & effects', 
+      icon: 'videocam-outline',
+      iconLib: 'Ionicons',
+      color: '#00D4FF'
+    },
+    { 
+      id: 'android', 
+      label: 'ANDROID BUILD', 
+      description: 'Generate production-ready APK', 
+      icon: 'logo-android',
+      iconLib: 'Ionicons',
+      color: '#3DDC84'
+    },
+    { 
+      id: 'web', 
+      label: 'WEB STUDIO', 
+      description: 'Launch & manage web version', 
+      icon: 'globe-outline',
+      iconLib: 'Ionicons',
+      color: '#FF6B6B'
+    },
+    { 
+      id: 'analyze', 
+      label: 'SYSTEM ANALYSIS', 
+      description: 'Full system diagnostics & monitoring', 
+      icon: 'analytics-outline',
+      iconLib: 'Ionicons',
+      color: '#A855F7'
+    },
   ];
 
+  const renderIcon = (command) => {
+    const IconComponent = command.iconLib === 'Ionicons' ? Ionicons : MaterialIcons;
+    return <IconComponent name={command.icon} size={28} color={command.color} />;
+  };
+
   const handleCommand = (command) => {
-    setActiveCommand(command.id);
-    
-    switch(command.id) {
-      case 'build':
-        Alert.alert('Build System', 'Starting full system build...');
-        // TODO: Connect to actual build script
-        break;
-      case 'video':
-        Alert.alert('Cinematic Pipeline', 'Launching FFmpeg pipeline...');
-        // TODO: Connect to FFmpeg bridge
-        break;
-      case 'android':
-        Alert.alert('Android Build', 'Starting EAS Android build...');
-        // TODO: Trigger eas build
-        break;
-      case 'web':
-        Alert.alert('Web Studio', 'Opening web interface...');
-        break;
-      case 'analyze':
-        Alert.alert('System Analysis', 'Running full diagnostics...');
-        break;
-      default:
-        break;
+    setCurrentPage(command.id);
+  };
+
+  const goBack = () => {
+    setCurrentPage('main');
+  };
+
+  // Render different pages based on selection
+  const renderPage = () => {
+    if (currentPage === 'main') {
+      return (
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <Text style={styles.sectionTitle}>COMMAND CENTER</Text>
+          
+          {commands.map((command) => (
+            <TouchableOpacity
+              key={command.id}
+              style={styles.commandCard}
+              onPress={() => handleCommand(command)}
+              activeOpacity={0.85}
+            >
+              <View style={styles.cardContent}>
+                <View style={[styles.iconContainer, { backgroundColor: command.color + '15' }]}>
+                  {renderIcon(command)}
+                </View>
+                <View style={styles.textContainer}>
+                  <Text style={styles.commandLabel}>{command.label}</Text>
+                  <Text style={styles.commandDescription}>{command.description}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={22} color="#555" />
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      );
     }
-    
-    setTimeout(() => setActiveCommand(null), 1500);
+
+    // Individual Pages
+    return (
+      <View style={styles.pageContainer}>
+        <TouchableOpacity style={styles.backButton} onPress={goBack}>
+          <Ionicons name="arrow-back" size={24} color="#FFD700" />
+          <Text style={styles.backText}>Back to Command Center</Text>
+        </TouchableOpacity>
+
+        <View style={styles.pageContent}>
+          <Text style={styles.pageTitle}>
+            {commands.find(c => c.id === currentPage)?.label}
+          </Text>
+          <Text style={styles.pageDescription}>
+            {commands.find(c => c.id === currentPage)?.description}
+          </Text>
+
+          {/* Placeholder content for each page */}
+          <View style={styles.placeholderBox}>
+            <Text style={styles.placeholderText}>
+              {currentPage === 'build' && 'System build module will be integrated here.'}
+              {currentPage === 'video' && 'FFmpeg cinematic pipeline controls will appear here.'}
+              {currentPage === 'android' && 'EAS Build configuration and APK generation options.'}
+              {currentPage === 'web' && 'Web studio and deployment controls.'}
+              {currentPage === 'analyze' && 'System diagnostics and performance metrics.'}
+            </Text>
+          </View>
+
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={() => Alert.alert('Action', `Executing ${currentPage} command...`)}
+          >
+            <Text style={styles.actionButtonText}>EXECUTE COMMAND</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
   };
 
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
       
-      {/* Header */}
+      {/* Cinematic Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>V6 CINEMATIC</Text>
+        <View style={styles.headerTop}>
+          <Text style={styles.title}>V6</Text>
+          <Text style={styles.titleGold}>CINEMATIC</Text>
+        </View>
         <Text style={styles.subtitle}>CONTROL SYSTEM</Text>
-        <View style={styles.statusBar}>
+        
+        <View style={styles.statusContainer}>
           <View style={styles.statusDot} />
-          <Text style={styles.statusText}>SYSTEM READY</Text>
+          <Text style={styles.statusText}>ALL SYSTEMS OPERATIONAL</Text>
         </View>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.sectionTitle}>COMMAND CENTER</Text>
-        
-        {commands.map((command) => (
-          <TouchableOpacity
-            key={command.id}
-            style={[
-              styles.commandCard,
-              activeCommand === command.id && styles.commandCardActive
-            ]}
-            onPress={() => handleCommand(command)}
-            activeOpacity={0.8}
-          >
-            <View style={styles.cardHeader}>
-              <Text style={styles.commandIcon}>{command.icon}</Text>
-              <Text style={styles.commandLabel}>{command.label}</Text>
-            </View>
-            <Text style={styles.commandDescription}>{command.description}</Text>
-            
-            {activeCommand === command.id && (
-              <View style={styles.loadingBar}>
-                <View style={styles.loadingProgress} />
-              </View>
-            )}
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      {renderPage()}
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>V6 CORE ULTIMATE • CINEMATIC AI STUDIO</Text>
+        <Text style={styles.footerText}>V6 CORE ULTIMATE • CINEMATIC AI PRODUCTION STUDIO</Text>
       </View>
     </View>
   );
@@ -97,111 +163,170 @@ const styles = StyleSheet.create({
     backgroundColor: '#0a0a0a',
   },
   header: {
-    paddingTop: 60,
+    paddingTop: 55,
     paddingHorizontal: 24,
-    paddingBottom: 30,
-    alignItems: 'center',
+    paddingBottom: 25,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: '#1f1f1f',
+    alignItems: 'center',
   },
-  title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#FFD700',
-    letterSpacing: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#888',
-    letterSpacing: 6,
-    marginTop: 4,
-  },
-  statusBar: {
+  headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 16,
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: '800',
+    color: '#fff',
+    letterSpacing: 2,
+  },
+  titleGold: {
+    fontSize: 36,
+    fontWeight: '800',
+    color: '#FFD700',
+    letterSpacing: 2,
+    marginLeft: 8,
+  },
+  subtitle: {
+    fontSize: 13,
+    color: '#777',
+    letterSpacing: 4,
+    marginTop: 2,
+  },
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 14,
     backgroundColor: '#111',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
     borderRadius: 20,
   },
   statusDot: {
-    width: 8,
-    height: 8,
+    width: 7,
+    height: 7,
     backgroundColor: '#00FF88',
     borderRadius: 4,
     marginRight: 8,
   },
   statusText: {
     color: '#00FF88',
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1,
   },
   content: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 10,
   },
   sectionTitle: {
     color: '#666',
-    fontSize: 13,
-    letterSpacing: 2,
+    fontSize: 12,
+    letterSpacing: 3,
     marginBottom: 16,
-    marginLeft: 4,
+    marginLeft: 8,
   },
   commandCard: {
     backgroundColor: '#111',
     borderRadius: 16,
-    padding: 20,
-    marginBottom: 14,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#222',
+    overflow: 'hidden',
   },
-  commandCardActive: {
-    borderColor: '#FFD700',
-    backgroundColor: '#1a1a1a',
-  },
-  cardHeader: {
+  cardContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    padding: 18,
   },
-  commandIcon: {
-    fontSize: 24,
-    marginRight: 12,
+  iconContainer: {
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  textContainer: {
+    flex: 1,
   },
   commandLabel: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
-    letterSpacing: 1,
+    marginBottom: 4,
   },
   commandDescription: {
+    color: '#777',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  pageContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  backText: {
+    color: '#FFD700',
+    fontSize: 15,
+    marginLeft: 8,
+    fontWeight: '600',
+  },
+  pageContent: {
+    flex: 1,
+  },
+  pageTitle: {
+    color: '#fff',
+    fontSize: 26,
+    fontWeight: '800',
+    marginBottom: 8,
+  },
+  pageDescription: {
     color: '#888',
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 15,
+    marginBottom: 40,
   },
-  loadingBar: {
-    height: 3,
-    backgroundColor: '#333',
-    borderRadius: 2,
-    marginTop: 12,
-    overflow: 'hidden',
+  placeholderBox: {
+    backgroundColor: '#111',
+    borderRadius: 16,
+    padding: 24,
+    marginBottom: 30,
+    borderWidth: 1,
+    borderColor: '#222',
   },
-  loadingProgress: {
-    height: '100%',
-    width: '60%',
+  placeholderText: {
+    color: '#777',
+    fontSize: 15,
+    lineHeight: 24,
+    textAlign: 'center',
+  },
+  actionButton: {
     backgroundColor: '#FFD700',
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: 'center',
+  },
+  actionButtonText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: 1,
   },
   footer: {
-    padding: 20,
+    paddingVertical: 18,
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#1a1a1a',
+    borderTopColor: '#1f1f1f',
   },
   footerText: {
     color: '#444',
-    fontSize: 11,
+    fontSize: 10,
     letterSpacing: 2,
   },
 });

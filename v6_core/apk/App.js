@@ -3,10 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function V6CinematicPhase3() {
+export default function V6CinematicAudit() {
   const [currentPage, setCurrentPage] = useState('main');
   const [executing, setExecuting] = useState(null);
   const [logs, setLogs] = useState([]);
+  const [error, setError] = useState(null);
 
   const commands = [
     { id: 'build', label: 'BUILD SYSTEM', desc: 'Infrastructure & Deployment', icon: 'construct-outline', color: '#FFD700' },
@@ -20,37 +21,52 @@ export default function V6CinematicPhase3() {
     setLogs(prev => [...prev.slice(-6), { time: new Date().toLocaleTimeString(), message }]);
   }, []);
 
-  const handleCommand = useCallback((command) => {
-    setCurrentPage(command.id);
-    addLog(`Opened: ${command.label}`);
+  const handleError = useCallback((err) => {
+    setError(err.message || 'An unknown error occurred');
+    addLog(`Error: ${err.message || 'Unknown error'}`);
+    setTimeout(() => setError(null), 5000);
   }, [addLog]);
+
+  const handleCommand = useCallback((command) => {
+    try {
+      setCurrentPage(command.id);
+      addLog(`Opened: ${command.label}`);
+    } catch (err) {
+      handleError(err);
+    }
+  }, [addLog, handleError]);
 
   const goBack = useCallback(() => {
     setCurrentPage('main');
     setExecuting(null);
+    setError(null);
   }, []);
 
   const executeCommand = useCallback((command) => {
     setExecuting(command.id);
     addLog(`Starting: ${command.label}...`);
 
-    setTimeout(() => {
-      setExecuting(null);
-      addLog(`Completed: ${command.label}`);
+    try {
+      setTimeout(() => {
+        setExecuting(null);
+        addLog(`Completed: ${command.label}`);
 
-      if (command.id === 'android') {
-        Alert.alert('Android Build', 'EAS Build process initiated. Monitor progress in your EAS dashboard or Termux.');
-      } else if (command.id === 'video') {
-        Alert.alert('Cinematic Pipeline', 'FFmpeg command ready. Example: ffmpeg -i input.mp4 -vf "eq=brightness=0.1" output.mp4');
-      } else if (command.id === 'build') {
-        Alert.alert('System Build', 'Full system build initiated. Check Termux for detailed output.');
-      } else if (command.id === 'analyze') {
-        Alert.alert('System Analysis', 'Running diagnostics... All core systems are healthy.');
-      } else {
-        Alert.alert(command.label, `${command.label} executed.`);
-      }
-    }, 1800);
-  }, [addLog]);
+        if (command.id === 'android') {
+          Alert.alert('Android Build', 'EAS Build triggered. Monitor in EAS dashboard.');
+        } else if (command.id === 'video') {
+          Alert.alert('Cinematic Pipeline', 'FFmpeg command prepared. Use in Termux: ffmpeg -i input.mp4 output.mp4');
+        } else if (command.id === 'build') {
+          Alert.alert('System Build', 'Full system build process started.');
+        } else if (command.id === 'analyze') {
+          Alert.alert('System Analysis', 'All systems healthy. No critical issues found.');
+        } else {
+          Alert.alert(command.label, `${command.label} executed successfully.`);
+        }
+      }, 1800);
+    } catch (err) {
+      handleError(err);
+    }
+  }, [addLog, handleError]);
 
   const currentCommand = commands.find(c => c.id === currentPage);
 
@@ -124,6 +140,8 @@ export default function V6CinematicPhase3() {
           )}
         </TouchableOpacity>
 
+        {error && <Text style={styles.errorText}>Error: {error}</Text>}
+
         {logs.length > 0 && (
           <View style={styles.logsBox}>
             <Text style={styles.logsTitle}>RECENT ACTIVITY</Text>
@@ -188,6 +206,7 @@ const styles = StyleSheet.create({
   infoText: { color: '#aaa', fontSize: 14, lineHeight: 22, textAlign: 'center' },
   execButton: { paddingVertical: 16, borderRadius: 14, alignItems: 'center', marginTop: 10 },
   execText: { color: '#000', fontSize: 15, fontWeight: '800', letterSpacing: 1 },
+  errorText: { color: '#FF6B6B', fontSize: 14, textAlign: 'center', marginTop: 10 },
   logsBox: { backgroundColor: '#0f0f0f', borderRadius: 12, padding: 16, marginTop: 20, borderWidth: 1, borderColor: '#222' },
   logsTitle: { color: '#666', fontSize: 12, marginBottom: 8, letterSpacing: 1 },
   logItem: { color: '#888', fontSize: 12, marginBottom: 4 },

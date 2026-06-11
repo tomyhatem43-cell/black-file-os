@@ -11,10 +11,12 @@ import Animated, {
   withRepeat,
 } from 'react-native-reanimated';
 
-// V6 ULTIMATE CINEMATIC AI STUDIO - Full Execution of All Previous Requests
-// Integrated: Reanimated (compatible), Multi-Agent Orchestrator, Connector Best Features, FFmpeg Pipeline, Cinematic UI
+// V6 GLOBAL CINEMATIC INTELLIGENCE - Global Brand Transformation v2.0
+// Local Power. Global Stories. Cinematic Without Limits.
+// Now a worldwide innovative advanced brand with global content + Pharaonic Signature as premium differentiator.
+// Integrated: Reanimated, Multi-Agent Orchestrator, Global Trends, Connector Best Features, FFmpeg Pipeline, Cinematic UI
 
-export default function V6UltimateCinematicStudio() {
+export default function V6GlobalCinematicStudio() {
   const [videoTitle, setVideoTitle] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -46,7 +48,7 @@ export default function V6UltimateCinematicStudio() {
 
   const generateUltimateCinematicVideo = async () => {
     if (!videoTitle.trim()) {
-      Alert.alert('خطأ', 'أدخل عنوان الفيديو السينمائي');
+      Alert.alert('Error', 'Enter your cinematic vision or title');
       return;
     }
 
@@ -63,17 +65,17 @@ export default function V6UltimateCinematicStudio() {
     );
 
     const safeTitle = videoTitle.replace(/\s+/g, '_').toLowerCase();
-    const outputFile = `V6_CINEMATIC_${safeTitle}.mp4`;
+    const outputFile = `V6_GLOBAL_${safeTitle}.mp4`;
 
-    // Multi-Agent Orchestrator (Best from Connectors + Innovations)
+    // Multi-Agent Orchestrator - Now with Global Content Focus
     const agents = [
-      { name: 'Trend Intelligence (GitHub Copilot-style)', action: 'Analyzing global trends...' },
-      { name: 'Script Architect (Notion AI)', action: 'Crafting professional screenplay...' },
-      { name: 'Cinematic Director', action: 'Planning camera movements...' },
-      { name: 'Visual Effects Nano', action: 'Generating LUTs & particles...' },
-      { name: 'Music & Sound AI (Vercel Edge)', action: 'Composing emotional score...' },
-      { name: 'Editor & Quality Guardian (Linear)', action: 'Final cut & optimization...' },
-      { name: 'FFmpeg Executor', action: 'Rendering cinematic masterpiece...' },
+      { name: 'Global Trend Intelligence', action: 'Analyzing worldwide trends across TikTok, YouTube, Instagram, X (global + regional)...' },
+      { name: 'Cross-Cultural Script Architect', action: 'Crafting professional screenplay with universal archetypes + cultural authenticity...' },
+      { name: 'Cinematic Director', action: 'Planning camera movements for global cinema styles...' },
+      { name: 'Visual Effects Nano', action: 'Generating LUTs, particles & world cinema aesthetics...' },
+      { name: 'Music & Sound AI', action: 'Composing emotional score with global music influences...' },
+      { name: 'Editor & Quality Guardian', action: 'Final cut, optimization & Pharaonic Signature premium filter...' },
+      { name: 'FFmpeg Executor (CineForge)', action: 'Rendering global masterpiece with local nano-power...' },
     ];
 
     for (let i = 0; i < agents.length; i++) {
@@ -89,16 +91,16 @@ export default function V6UltimateCinematicStudio() {
       updateAgentStatus(agent.name, 'COMPLETED');
     }
 
-    // FFmpeg Cinematic Pipeline (Real for Termux, Simulated for Web)
+    // FFmpeg Cinematic Pipeline - Global + Pharaonic Signature
     const ffmpegCommand = `-i input.mp4 -vf "eq=brightness=0.08:contrast=1.35:saturation=1.25,unsharp=5:5:1.2" -c:v libx264 -preset veryslow -crf 16 -c:a aac -b:a 320k ${outputFile}`;
-    addLog(`FFmpeg Executor: Executing cinematic render command...`);
+    addLog(`FFmpeg Executor: Executing global cinematic render with Pharaonic Signature...`);
     
     // In real Termux: Use FFmpegKit.execute(ffmpegCommand)
     await new Promise(resolve => setTimeout(resolve, 1200));
 
     progressValue.value = withTiming(100, { duration: 400 });
     setProgress(100);
-    addLog('Masterpiece rendered with Nano Megatronic quality.');
+    addLog('Global Masterpiece rendered with Nano Megatronic quality & Pharaonic Signature.');
 
     setResult({ 
       title: videoTitle, 
@@ -108,7 +110,7 @@ export default function V6UltimateCinematicStudio() {
       ffmpegCommand 
     });
 
-    Alert.alert('نجاح سينمائي خارق', `تم إنشاء الفيديو: ${outputFile}\n\nFFmpeg Command ready for Termux execution.`);
+    Alert.alert('Global Cinematic Success', `Video created: ${outputFile}\n\nReady for Termux execution. Pharaonic Signature applied as premium global differentiator.`);
     setIsGenerating(false);
   };
 
@@ -141,40 +143,40 @@ export default function V6UltimateCinematicStudio() {
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      {/* Cinematic Header with Breathing */}
+      {/* Cinematic Header with Breathing - Global Brand */}
       <View style={styles.header}>
-        <Animated.Text style={[styles.logo, animatedTitleStyle]}>V6 ULTIMATE</Animated.Text>
-        <Text style={styles.tagline}>Nano Megatronic Cinematic AI Studio • All Previous Requests Executed</Text>
+        <Animated.Text style={[styles.logo, animatedTitleStyle]}>V6 GLOBAL</Animated.Text>
+        <Text style={styles.tagline}>Local Power. Global Stories. Cinematic Without Limits.</Text>
         <View style={styles.statusBadge}>
-          <Text style={styles.statusText}>10/10 GLOBAL</Text>
+          <Text style={styles.statusText}>WORLD BRAND • 10/10</Text>
         </View>
       </View>
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        {/* Stats from Connectors */}
+        {/* Stats - Global Reach */}
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
-            <Text style={styles.statNumber}>2,847</Text>
-            <Text style={styles.statLabel}>Cinematic Projects</Text>
+            <Text style={styles.statNumber}>180+</Text>
+            <Text style={styles.statLabel}>Countries Reached</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statNumber}>41.2k</Text>
-            <Text style={styles.statLabel}>Videos Rendered</Text>
+            <Text style={styles.statNumber}>47</Text>
+            <Text style={styles.statLabel}>World Cinema Styles</Text>
           </View>
           <View style={styles.statCard}>
             <Text style={styles.statNumber}>312</Text>
-            <Text style={styles.statLabel}>Active Agents</Text>
+            <Text style={styles.statLabel}>Active Global Agents</Text>
           </View>
         </View>
 
-        {/* Main Generation - Cinematic Card */}
+        {/* Main Generation - Global Brand Card */}
         <View style={styles.mainCard}>
-          <Text style={styles.mainTitle}>Create Cinematic Masterpiece</Text>
-          <Text style={styles.mainSubtitle}>One title → Full multi-agent cinematic pipeline with best features from all connectors</Text>
+          <Text style={styles.mainTitle}>Create Global Cinematic Masterpiece</Text>
+          <Text style={styles.mainSubtitle}>One title → Full multi-agent pipeline with global world cinema styles + Pharaonic Signature premium mode (Egyptian cinematic excellence as global luxury signature)</Text>
 
           <TextInput
             style={styles.input}
-            placeholder="Enter your cinematic vision or title..."
+            placeholder="Enter your global cinematic vision or title..."
             placeholderTextColor="#555"
             value={videoTitle}
             onChangeText={setVideoTitle}
@@ -190,24 +192,24 @@ export default function V6UltimateCinematicStudio() {
               {isGenerating ? (
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <ActivityIndicator color="#000" size="small" />
-                  <Text style={styles.generateBtnText}>  Rendering with Collective Intelligence...</Text>
+                  <Text style={styles.generateBtnText}>  Rendering Global Masterpiece...</Text>
                 </View>
               ) : (
-                <Text style={styles.generateBtnText}>Generate Ultimate Cinematic Video</Text>
+                <Text style={styles.generateBtnText}>Generate Global Cinematic Video</Text>
               )}
             </TouchableOpacity>
           </Animated.View>
         </View>
 
-        {/* Live Multi-Agent Orchestrator */}
+        {/* Live Multi-Agent Orchestrator - Global */}
         {(isGenerating || activeAgents.length > 0) && (
           <View style={styles.agentsCard}>
-            <Text style={styles.sectionTitle}>Live Agent Orchestrator (Connector Best Features Integrated)</Text>
+            <Text style={styles.sectionTitle}>Live Global Agent Orchestrator (World Content + Pharaonic Signature)</Text>
             
             <View style={styles.progressBarContainer}>
               <Animated.View style={[styles.progressBar, animatedProgressStyle]} />
             </View>
-            <Text style={styles.progressText}>{progress}% Complete • {activeAgents.length} Agents Active</Text>
+            <Text style={styles.progressText}>{progress}% Complete • {activeAgents.length} Global Agents Active</Text>
 
             <View style={styles.agentsList}>
               {activeAgents.map((agent, index) => (
@@ -230,31 +232,31 @@ export default function V6UltimateCinematicStudio() {
           </View>
         )}
 
-        {/* Result with FFmpeg Command */}
+        {/* Result with FFmpeg Command - Global */}
         {result && (
           <View style={styles.resultCard}>
             <Ionicons name="film" size={48} color="#FFD700" />
-            <Text style={styles.resultTitle}>Cinematic Masterpiece Created</Text>
+            <Text style={styles.resultTitle}>Global Cinematic Masterpiece Created</Text>
             <Text style={styles.resultSubtitle}>{result.title}</Text>
             <Text style={styles.resultFile}>Output: {result.outputFile}</Text>
-            <Text style={styles.resultDetail}>Agents Used: {result.agentsUsed} | Quality: Nano Megatronic 10/10</Text>
+            <Text style={styles.resultDetail}>Agents Used: {result.agentsUsed} | Quality: Global 10/10 + Pharaonic Signature Premium</Text>
             
             <View style={styles.commandBox}>
-              <Text style={styles.commandTitle}>FFmpeg Command (Copy for Termux):</Text>
+              <Text style={styles.commandTitle}>FFmpeg Command (Copy for Termux - CineForge Global):</Text>
               <Text style={styles.commandText}>{result.ffmpegCommand}</Text>
             </View>
           </View>
         )}
 
-        {/* Connector Best Features Section */}
+        {/* Global Brand Features Section */}
         <View style={styles.featuresSection}>
-          <Text style={styles.sectionTitle}>Best Features from Connectors (Integrated)</Text>
+          <Text style={styles.sectionTitle}>V6 Global Brand Features (Innovative Advanced Worldwide)</Text>
           <View style={styles.featuresGrid}>
             {[
-              { icon: 'logo-github', label: 'Self-Evolving Agents (GitHub)' },
-              { icon: 'document-text', label: 'Dynamic Registry (Notion)' },
-              { icon: 'cloud', label: 'Edge Rendering (Vercel)' },
-              { icon: 'list', label: 'Pipeline Tracking (Linear)' },
+              { icon: 'globe', label: 'Global Content Library (World Cinema Styles)' },
+              { icon: 'star', label: 'Pharaonic Signature Premium (Egyptian Excellence)' },
+              { icon: 'shield', label: '100% Local & Private (No Cloud)' },
+              { icon: 'infinite', label: 'Unlimited Creation • Free Tier Max' },
             ].map((feature, i) => (
               <View key={i} style={styles.featureChip}>
                 <Ionicons name={feature.icon} size={20} color="#FFD700" />

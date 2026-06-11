@@ -1,72 +1,64 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Alert, TextInput, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Alert, TextInput } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import { FFmpegKit, ReturnCode } from 'ffmpeg-kit-react-native';
 
-// V6 with Real FFmpeg Execution via Dev Client
-const productionPipeline = {
-  generateCommand: (title) => {
-    const safeTitle = title.replace(/\s+/g, '_').toLowerCase();
-    return `ffmpeg -i input.mp4 -vf "eq=brightness=0.08:contrast=1.25:saturation=1.18,unsharp=5:5:0.9:5:5:0.0,colorbalance=rs=.08:gs=.04:bs=-.05" -c:a aac -b:a 192k output_${safeTitle}.mp4`;
-  }
-};
-
-export default function V6DevClientFFmpeg() {
+// V6 with Real FFmpeg via ffmpeg-kit-react-native
+export default function V6FFmpegNPM() {
   const [title, setTitle] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState(null);
   const [logs, setLogs] = useState([]);
 
   const addLog = useCallback((message) => {
-    setLogs(prev => [...prev.slice(-10), { time: new Date().toLocaleTimeString(), message }]);
+    setLogs(prev => [...prev.slice(-12), { time: new Date().toLocaleTimeString(), message }]);
   }, []);
 
-  const generateCommand = useCallback(async () => {
+  const generateAndExecute = useCallback(async () => {
     if (!title.trim()) {
       Alert.alert('خطأ', 'الرجاء إدخال عنوان الفيديو');
       return;
     }
 
-    setIsGenerating(true);
+    setIsProcessing(true);
     setLogs([]);
+    setResult(null);
 
-    addLog('جاري توليد أمر FFmpeg...');
-    await new Promise(r => setTimeout(r, 800));
+    const safeTitle = title.replace(/\s+/g, '_').toLowerCase();
+    const outputFile = `output_${safeTitle}.mp4`;
 
-    const command = productionPipeline.generateCommand(title);
+    const command = `-i input.mp4 -vf "eq=brightness=0.08:contrast=1.25:saturation=1.18,unsharp=5:5:0.9:5:5:0.0" -c:a aac -b:a 192k ${outputFile}`;
 
-    setResult({ title, command });
-    setIsGenerating(false);
-    addLog('تم توليد الأمر بنجاح');
+    addLog('جاري تنفيذ FFmpeg...');
+
+    try {
+      const session = await FFmpegKit.execute(command);
+      const returnCode = await session.getReturnCode();
+
+      if (ReturnCode.isSuccess(returnCode)) {
+        addLog('تم إنشاء الفيديو بنجاح!');
+        setResult({ title, outputFile, success: true });
+        Alert.alert('نجاح', `تم إنشاء الفيديو: ${outputFile}`);
+      } else {
+        addLog('حدث خطأ أثناء المعالجة');
+        Alert.alert('خطأ', 'فشل تنفيذ FFmpeg');
+      }
+    } catch (error) {
+      addLog('خطأ: ' + error.message);
+      Alert.alert('خطأ', error.message);
+    }
+
+    setIsProcessing(false);
   }, [title, addLog]);
-
-  const executeRealFFmpeg = useCallback(() => {
-    if (!result?.command) return;
-
-    Alert.alert(
-      'تنفيذ FFmpeg',
-      'سيتم محاولة تشغيل الأمر عبر Dev Client.',
-      [
-        {
-          text: 'تشغيل',
-          onPress: () => {
-            // In Dev Client, we can use native modules
-            // For now, we copy and guide
-            Alert.alert('جاهز', 'الأمر جاهز للتنفيذ. في النسخة القادمة سيتم التشغيل المباشر.');
-          }
-        },
-        { text: 'إلغاء', style: 'cancel' }
-      ]
-    );
-  }, [result]);
 
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
 
       <View style={styles.header}>
-        <Text style={styles.title}>V6 <Text style={{color: '#FFD700'}}>FFMPEG</Text></Text>
-        <Text style={styles.subtitle}>تنفيذ حقيقي عبر Dev Client</Text>
+        <Text style={styles.title}>V6 <Text style={{color: '#FFD700'}}>FFMPEG NPM</Text></Text>
+        <Text style={styles.subtitle}>تنفيذ FFmpeg عبر NPM (ffmpeg-kit)</Text>
       </View>
 
       <View style={styles.inputSection}>
@@ -80,39 +72,39 @@ export default function V6DevClientFFmpeg() {
         />
 
         <TouchableOpacity 
-          style={[styles.generateBtn, isGenerating && styles.disabled]} 
-          onPress={generateCommand}
-          disabled={isGenerating}
+          style={[styles.generateBtn, isProcessing && styles.disabled]} 
+          onPress={generateAndExecute}
+          disabled={isProcessing}
         >
-          {isGenerating ? (
+          {isProcessing ? (
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <ActivityIndicator color="#000" style={{ marginRight: 10 }} />
-              <Text style={styles.btnText}>جاري التوليد...</Text>
+              <Text style={styles.btnText}>جاري المعالجة...</Text>
             </View>
           ) : (
-            <Text style={styles.btnText}>توليد أمر FFmpeg</Text>
+            <Text style={styles.btnText}>توليد وتنفيذ الفيديو</Text>
           )}
         </TouchableOpacity>
       </View>
 
       {result && (
         <View style={styles.resultSection}>
-          <Text style={styles.resultTitle}>الأمر جاهز للتنفيذ</Text>
+          <Text style={styles.resultTitle}>تم إنشاء الفيديو</Text>
+          <Text style={styles.resultValue}>الملف: {result.outputFile}</Text>
+        </View>
+      )}
 
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>الأمر:</Text>
-            <Text style={styles.command}>{result.command}</Text>
-          </View>
-
-          <TouchableOpacity style={styles.executeBtn} onPress={executeRealFFmpeg}>
-            <Ionicons name="play" size={22} color="#fff" />
-            <Text style={styles.executeText}>تشغيل FFmpeg الحقيقي</Text>
-          </TouchableOpacity>
+      {logs.length > 0 && (
+        <View style={styles.logsSection}>
+          <Text style={styles.logsTitle}>سجل FFmpeg</Text>
+          {logs.map((log, i) => (
+            <Text key={i} style={styles.logItem}>• {log.time} — {log.message}</Text>
+          ))}
         </View>
       )}
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>V6 CORE • Dev Client • FFmpeg حقيقي</Text>
+        <Text style={styles.footerText}>V6 CORE • FFmpeg عبر NPM</Text>
       </View>
     </View>
   );
@@ -131,11 +123,10 @@ const styles = StyleSheet.create({
   btnText: { color: '#000', fontWeight: '900', fontSize: 15 },
   resultSection: { padding: 20 },
   resultTitle: { color: '#30D158', fontSize: 18, fontWeight: '800', marginBottom: 16 },
-  card: { backgroundColor: '#111', padding: 16, borderRadius: 12, marginBottom: 14, borderWidth: 1, borderColor: '#222' },
-  cardLabel: { color: '#FFD700', fontSize: 13, fontWeight: '700', marginBottom: 6 },
-  command: { color: '#00D4FF', fontSize: 12, fontFamily: 'monospace', backgroundColor: '#0a0a0a', padding: 12, borderRadius: 8 },
-  executeBtn: { backgroundColor: '#FF375F', padding: 18, borderRadius: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 10 },
-  executeText: { color: '#fff', fontWeight: '900', fontSize: 16, marginLeft: 10 },
+  resultValue: { color: '#fff', fontSize: 15 },
+  logsSection: { padding: 20, paddingTop: 0 },
+  logsTitle: { color: '#666', fontSize: 12, marginBottom: 8 },
+  logItem: { color: '#888', fontSize: 12, marginBottom: 3 },
   footer: { paddingVertical: 14, alignItems: 'center', borderTopWidth: 1, borderTopColor: '#1f1f1f' },
   footerText: { color: '#555', fontSize: 10, letterSpacing: 2 },
 });

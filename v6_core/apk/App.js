@@ -1,28 +1,12 @@
-import React, { useState, useCallback, memo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
-const CommandCard = memo(({ command, onPress }) => (
-  <TouchableOpacity 
-    style={styles.card} 
-    onPress={() => onPress(command)} 
-    activeOpacity={0.85}
-  >
-    <View style={[styles.iconBox, { backgroundColor: command.color + '12' }]}>
-      <Ionicons name={command.icon} size={24} color={command.color} />
-    </View>
-    <View style={{ flex: 1 }}>
-      <Text style={styles.cardTitle}>{command.label}</Text>
-      <Text style={styles.cardDesc}>{command.desc}</Text>
-    </View>
-    <Ionicons name="chevron-forward" size={20} color="#444" />
-  </TouchableOpacity>
-));
-
-export default function V6CinematicOptimized() {
+export default function V6CinematicUltimate() {
   const [currentPage, setCurrentPage] = useState('main');
   const [executing, setExecuting] = useState(null);
+  const [logs, setLogs] = useState([]);
 
   const commands = [
     { id: 'build', label: 'BUILD SYSTEM', desc: 'Infrastructure & Deployment', icon: 'construct-outline', color: '#FFD700' },
@@ -32,9 +16,14 @@ export default function V6CinematicOptimized() {
     { id: 'analyze', label: 'SYSTEM ANALYSIS', desc: 'Diagnostics & Monitoring', icon: 'analytics-outline', color: '#A855F7' },
   ];
 
+  const addLog = useCallback((message) => {
+    setLogs(prev => [...prev.slice(-4), { time: new Date().toLocaleTimeString(), message }]);
+  }, []);
+
   const handleCommand = useCallback((command) => {
     setCurrentPage(command.id);
-  }, []);
+    addLog(`Opened ${command.label}`);
+  }, [addLog]);
 
   const goBack = useCallback(() => {
     setCurrentPage('main');
@@ -43,10 +32,22 @@ export default function V6CinematicOptimized() {
 
   const executeCommand = useCallback((command) => {
     setExecuting(command.id);
+    addLog(`Starting ${command.label}...`);
+
+    // Simulate real execution (replace with actual logic later)
     setTimeout(() => {
       setExecuting(null);
-    }, 1600);
-  }, []);
+      addLog(`${command.label} completed successfully`);
+      
+      if (command.id === 'android') {
+        Alert.alert('Build Started', 'EAS Build has been triggered. Check your EAS dashboard for progress.');
+      } else if (command.id === 'video') {
+        Alert.alert('Pipeline Started', 'FFmpeg cinematic processing has begun.');
+      } else {
+        Alert.alert('Command Executed', `${command.label} has been executed.`);
+      }
+    }, 2200);
+  }, [addLog]);
 
   const currentCommand = commands.find(c => c.id === currentPage);
 
@@ -54,10 +55,35 @@ export default function V6CinematicOptimized() {
     <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
       <Text style={styles.section}>COMMAND CENTER</Text>
       {commands.map(cmd => (
-        <CommandCard key={cmd.id} command={cmd} onPress={handleCommand} />
+        <TouchableOpacity 
+          key={cmd.id} 
+          style={styles.card} 
+          onPress={() => handleCommand(cmd)} 
+          activeOpacity={0.9}
+        >
+          <View style={[styles.iconBox, { backgroundColor: cmd.color + '12' }]}>
+            <Ionicons name={cmd.icon} size={26} color={cmd.color} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.cardTitle}>{cmd.label}</Text>
+            <Text style={styles.cardDesc}>{cmd.desc}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={22} color="#555" />
+        </TouchableOpacity>
       ))}
+
+      {/* Quick Status */}
+      <View style={styles.statusBox}>
+        <Text style={styles.statusTitle}>SYSTEM STATUS</Text>
+        <View style={styles.statusRow}>
+          <View style={styles.statusItem}>
+            <Ionicons name="checkmark-circle" size={18} color="#00FF88" />
+            <Text style={styles.statusText}>All Systems Operational</Text>
+          </View>
+        </View>
+      </View>
     </ScrollView>
-    );
+  );
 
   const renderDetail = () => {
     if (!currentCommand) return null;
@@ -67,12 +93,12 @@ export default function V6CinematicOptimized() {
       <View style={styles.detailContainer}>
         <TouchableOpacity onPress={goBack} style={styles.backRow}>
           <Ionicons name="arrow-back" size={22} color="#FFD700" />
-          <Text style={styles.backLabel}>Back to Menu</Text>
+          <Text style={styles.backLabel}>Back to Command Center</Text>
         </TouchableOpacity>
 
         <View style={styles.detailHeader}>
           <View style={[styles.iconBoxLarge, { backgroundColor: currentCommand.color + '15' }]}>
-            <Ionicons name={currentCommand.icon} size={38} color={currentCommand.color} />
+            <Ionicons name={currentCommand.icon} size={42} color={currentCommand.color} />
           </View>
           <Text style={styles.detailTitle}>{currentCommand.label}</Text>
           <Text style={styles.detailDesc}>{currentCommand.desc}</Text>
@@ -80,11 +106,11 @@ export default function V6CinematicOptimized() {
 
         <View style={styles.infoBox}>
           <Text style={styles.infoText}>
-            {currentPage === 'build' && 'This section manages full system builds, infrastructure setup, and deployment pipelines.'}
-            {currentPage === 'video' && 'Advanced FFmpeg pipeline for cinematic video processing, color grading, effects, and audio mixing.'}
-            {currentPage === 'android' && 'One-click EAS Build configuration and production APK generation.'}
-            {currentPage === 'web' && 'Tools for managing and deploying the web version of the interface.'}
-            {currentPage === 'analyze' && 'Real-time system diagnostics, performance metrics, and health monitoring.'}
+            {currentPage === 'build' && 'This module handles full system builds, Terraform infrastructure, and deployment pipelines.'}
+            {currentPage === 'video' && 'Advanced FFmpeg pipeline for cinematic video processing, color grading, denoising, and audio ducking.'}
+            {currentPage === 'android' && 'One-click EAS Build for generating signed production APKs ready for distribution.'}
+            {currentPage === 'web' && 'Web studio tools for managing and deploying the cinematic web interface.'}
+            {currentPage === 'analyze' && 'Real-time system diagnostics, performance metrics, logs, and health monitoring.'}
           </Text>
         </View>
 
@@ -95,13 +121,23 @@ export default function V6CinematicOptimized() {
         >
           {isExecuting ? (
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <ActivityIndicator color="#000" size="small" style={{ marginRight: 8 }} />
-              <Text style={styles.execText}>EXECUTING...</Text>
+              <ActivityIndicator color="#000" size="small" style={{ marginRight: 10 }} />
+              <Text style={styles.execText}>PROCESSING...</Text>
             </View>
           ) : (
             <Text style={styles.execText}>EXECUTE COMMAND</Text>
           )}
         </TouchableOpacity>
+
+        {/* Recent Activity */}
+        {logs.length > 0 && (
+          <View style={styles.logsBox}>
+            <Text style={styles.logsTitle}>RECENT ACTIVITY</Text>
+            {logs.map((log, index) => (
+              <Text key={index} style={styles.logItem}>• {log.time} — {log.message}</Text>
+            ))}
+          </View>
+        )}
       </View>
     );
   };
@@ -126,7 +162,7 @@ export default function V6CinematicOptimized() {
       {currentPage === 'main' ? renderMainMenu() : renderDetail()}
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>V6 CORE ULTIMATE  •  CINEMATIC AI STUDIO</Text>
+        <Text style={styles.footerText}>V6 CORE ULTIMATE  •  CINEMATIC AI PRODUCTION STUDIO</Text>
       </View>
     </View>
   );
@@ -158,6 +194,9 @@ const styles = StyleSheet.create({
   infoText: { color: '#aaa', fontSize: 14, lineHeight: 22, textAlign: 'center' },
   execButton: { paddingVertical: 16, borderRadius: 14, alignItems: 'center', marginTop: 10 },
   execText: { color: '#000', fontSize: 15, fontWeight: '800', letterSpacing: 1 },
+  logsBox: { backgroundColor: '#0f0f0f', borderRadius: 12, padding: 16, marginTop: 20, borderWidth: 1, borderColor: '#222' },
+  logsTitle: { color: '#666', fontSize: 12, marginBottom: 8, letterSpacing: 1 },
+  logItem: { color: '#888', fontSize: 12, marginBottom: 4 },
   footer: { paddingVertical: 14, alignItems: 'center', borderTopWidth: 1, borderTopColor: '#1a1a1a' },
   footerText: { color: '#444', fontSize: 9, letterSpacing: 2 },
 });

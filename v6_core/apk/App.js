@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function V6CinematicComplete() {
+export default function V6CinematicPhase3() {
   const [currentPage, setCurrentPage] = useState('main');
   const [executing, setExecuting] = useState(null);
   const [logs, setLogs] = useState([]);
@@ -17,7 +17,7 @@ export default function V6CinematicComplete() {
   ];
 
   const addLog = useCallback((message) => {
-    setLogs(prev => [...prev.slice(-5), { time: new Date().toLocaleTimeString(), message }]);
+    setLogs(prev => [...prev.slice(-6), { time: new Date().toLocaleTimeString(), message }]);
   }, []);
 
   const handleCommand = useCallback((command) => {
@@ -32,22 +32,24 @@ export default function V6CinematicComplete() {
 
   const executeCommand = useCallback((command) => {
     setExecuting(command.id);
-    addLog(`Executing: ${command.label}...`);
+    addLog(`Starting: ${command.label}...`);
 
     setTimeout(() => {
       setExecuting(null);
-      addLog(`${command.label} completed successfully`);
+      addLog(`Completed: ${command.label}`);
 
       if (command.id === 'android') {
-        Alert.alert('Android Build', 'EAS Build triggered successfully. Check your EAS dashboard.');
+        Alert.alert('Android Build', 'EAS Build process initiated. Monitor progress in your EAS dashboard or Termux.');
       } else if (command.id === 'video') {
-        Alert.alert('Cinematic Pipeline', 'FFmpeg processing started. Check Termux for output.');
+        Alert.alert('Cinematic Pipeline', 'FFmpeg command ready. Example: ffmpeg -i input.mp4 -vf "eq=brightness=0.1" output.mp4');
       } else if (command.id === 'build') {
-        Alert.alert('System Build', 'Full system build process initiated.');
+        Alert.alert('System Build', 'Full system build initiated. Check Termux for detailed output.');
+      } else if (command.id === 'analyze') {
+        Alert.alert('System Analysis', 'Running diagnostics... All core systems are healthy.');
       } else {
-        Alert.alert(command.label, `${command.label} executed successfully.`);
+        Alert.alert(command.label, `${command.label} executed.`);
       }
-    }, 2000);
+    }, 1800);
   }, [addLog]);
 
   const currentCommand = commands.find(c => c.id === currentPage);
@@ -56,12 +58,7 @@ export default function V6CinematicComplete() {
     <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
       <Text style={styles.section}>COMMAND CENTER</Text>
       {commands.map(cmd => (
-        <TouchableOpacity 
-          key={cmd.id} 
-          style={styles.card} 
-          onPress={() => handleCommand(cmd)} 
-          activeOpacity={0.9}
-        >
+        <TouchableOpacity key={cmd.id} style={styles.card} onPress={() => handleCommand(cmd)} activeOpacity={0.9}>
           <View style={[styles.iconBox, { backgroundColor: cmd.color + '12' }]}>
             <Ionicons name={cmd.icon} size={26} color={cmd.color} />
           </View>

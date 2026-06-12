@@ -1,9 +1,37 @@
-// Optional JS config for more dynamic setup
-module.exports = {
+import 'dotenv/config';
+
+export default {
   expo: {
-    name: 'V6 CORE Ultimate',
-    slug: 'v6-core-ultimate',
-    version: '1.0.0',
-    // Add more dynamic config here if needed
+    name: "V6 Core Ultimate",
+    slug: "v6-core-ultimate",
+    version: "1.0.0",
+    orientation: "portrait",
+    icon: "./assets/icon.png",
+    userInterfaceStyle: "dark",
+    splash: {
+      image: "./assets/splash-icon.png",
+      resizeMode: "contain",
+      backgroundColor: "#0a0a0a"
+    },
+    assetBundlePatterns: ["**/*"],
+    ios: {
+      supportsTablet: true
+    },
+    android: {
+      adaptiveIcon: {
+        foregroundImage: "./assets/adaptive-icon.png",
+        backgroundColor: "#0a0a0a"
+      },
+      package: "com.hatem560.v6coreultimate"
+    },
+    web: {
+      favicon: "./assets/favicon.png"
+    },
+    extra: {
+      eas: {
+        projectId: "1041aa6c-e2cf-408a-b684-c8a01af29ff9"
+      }
+    },
+    plugins: []
   }
 };
